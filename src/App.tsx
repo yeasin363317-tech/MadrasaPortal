@@ -21,6 +21,8 @@ import AdminNoticesPage from "@/pages/admin/AdminNoticesPage";
 import AdminRoutinesPage from "@/pages/admin/AdminRoutinesPage";
 import NoticesPage from "@/pages/NoticesPage";
 import RoutinesPage from "@/pages/RoutinesPage";
+import TeachersPage from "@/pages/TeachersPage";
+import TeacherDetailPage from "@/pages/TeacherDetailPage";
 import NotFound from "@/pages/NotFound";
 import WhatsAppButton from "@/components/features/WhatsAppButton";
 import supabase from "@/lib/supabase";
@@ -85,6 +87,8 @@ export default function App() {
         <Route path="/chat" element={<PublicLayout><ChatPage /></PublicLayout>} />
         <Route path="/notices" element={<PublicLayout><NoticesPage /></PublicLayout>} />
         <Route path="/routines" element={<PublicLayout><RoutinesPage /></PublicLayout>} />
+        <Route path="/teachers" element={<PublicLayout><TeachersPage /></PublicLayout>} />
+        <Route path="/teachers/:id" element={<PublicLayout><TeacherDetailPage /></PublicLayout>} />
 
         {/* Admin Login */}
         <Route path="/admin" element={<AdminLoginPage />} />

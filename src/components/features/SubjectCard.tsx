@@ -3,7 +3,7 @@
 // ============================================================
 
 import { useNavigate } from "react-router-dom";
-import { User, BookOpen, ArrowRight, GraduationCap } from "lucide-react";
+import { User, ArrowRight } from "lucide-react";
 import type { Subject } from "@/types";
 
 interface SubjectCardProps {
@@ -44,17 +44,7 @@ export default function SubjectCard({ subject, index }: SubjectCardProps) {
           <span className="text-warm-white/40 text-xs font-mono">{subject.nameEn}</span>
         </div>
 
-        {/* Progress Badge */}
-        <div
-          className="flex-shrink-0 text-xs font-bold px-2.5 py-1 rounded-full"
-          style={{
-            background: `${subject.color}22`,
-            color: subject.color,
-            border: `1px solid ${subject.color}33`,
-          }}
-        >
-          {progress}%
-        </div>
+
       </div>
 
       {/* Description */}
@@ -77,25 +67,7 @@ export default function SubjectCard({ subject, index }: SubjectCardProps) {
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="space-y-1.5">
-        <div className="flex justify-between text-xs text-warm-white/50">
-          <span className="flex items-center gap-1">
-            <BookOpen size={11} /> ক্লাস অগ্রগতি
-          </span>
-          <span>{subject.completedClasses}/{subject.totalClasses}</span>
-        </div>
-        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
-          <div
-            className="h-full rounded-full transition-all duration-700"
-            style={{
-              width: `${progress}%`,
-              background: `linear-gradient(90deg, ${subject.color}, ${subject.color}cc)`,
-              boxShadow: `0 0 8px ${subject.color}66`,
-            }}
-          />
-        </div>
-      </div>
+
 
       {/* Details Button */}
       <button

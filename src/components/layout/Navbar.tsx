@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Home, MessageCircle, Shield, Bell, Calendar } from "lucide-react";
+import { Menu, X, Home, MessageCircle, Shield, Bell, Calendar, GraduationCap } from "lucide-react";
 import { CrescentMoon } from "@/components/layout/IslamicPattern";
 
 export default function Navbar() {
@@ -27,6 +27,7 @@ export default function Navbar() {
     { href: "/", label: "হোম", icon: Home },
     { href: "/notices", label: "নোটিশ বোর্ড", icon: Bell },
     { href: "/routines", label: "রুটিন", icon: Calendar },
+    { href: "/teachers", label: "শিক্ষকবৃন্দ", icon: GraduationCap },
     { href: "/chat", label: "লাইভ চ্যাট", icon: MessageCircle },
     { href: "/admin", label: "এডমিন", icon: Shield },
   ];

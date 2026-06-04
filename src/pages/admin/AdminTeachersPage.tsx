@@ -1,9 +1,9 @@
 // ============================================================
-// AdminTeachersPage - Full CRUD with Modal Form (Teachers)
+// AdminTeachersPage - Full CRUD with Photo Upload & About Field
 // ============================================================
 
-import { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, Save, X, Menu, User, Phone, Mail, GraduationCap } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Plus, Edit2, Trash2, Save, X, Menu, User, Phone, Mail, GraduationCap, Upload, Image } from "lucide-react";
 import AdminSidebar from "@/components/layout/AdminSidebar";
 import IslamicPattern from "@/components/layout/IslamicPattern";
 import { toast } from "sonner";
@@ -12,12 +12,12 @@ import supabase from "@/lib/supabase";
 interface Teacher {
   id: string;
   name: string;
-  designation: string;
   subject: string;
   phone: string;
   email: string;
   education: string;
   photo_url: string;
+  about: string;
   is_active: boolean;
   created_at: string;
 }
@@ -27,6 +27,7 @@ export default function AdminTeachersPage() {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
@@ -34,12 +35,15 @@ export default function AdminTeachersPage() {
 
   // Form fields
   const [fName, setFName] = useState("");
-  const [fDesignation, setFDesignation] = useState("");
   const [fSubject, setFSubject] = useState("");
   const [fPhone, setFPhone] = useState("");
   const [fEmail, setFEmail] = useState("");
   const [fEducation, setFEducation] = useState("");
+  const [fAbout, setFAbout] = useState("");
+  const [fPhotoUrl, setFPhotoUrl] = useState("");
   const [fActive, setFActive] = useState(true);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { loadTeachers(); }, []);
 
@@ -56,19 +60,20 @@ export default function AdminTeachersPage() {
 
   const openAdd = () => {
     setEditingTeacher(null);
-    setFName(""); setFDesignation(""); setFSubject("");
-    setFPhone(""); setFEmail(""); setFEducation(""); setFActive(true);
+    setFName(""); setFSubject(""); setFPhone("");
+    setFEmail(""); setFEducation(""); setFAbout(""); setFPhotoUrl(""); setFActive(true);
     setModalOpen(true);
   };
 
   const openEdit = (t: Teacher) => {
     setEditingTeacher(t);
     setFName(t.name);
-    setFDesignation(t.designation);
     setFSubject(t.subject);
     setFPhone(t.phone);
     setFEmail(t.email);
     setFEducation(t.education);
+    setFAbout(t.about || "");
+    setFPhotoUrl(t.photo_url || "");
     setFActive(t.is_active);
     setModalOpen(true);
   };
@@ -78,16 +83,46 @@ export default function AdminTeachersPage() {
     setEditingTeacher(null);
   };
 
+  // Upload photo to Supabase Storage 'teachers' bucket
+  const handlePhotoUpload = async (file: File) => {
+    if (!file) return;
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error("ছবির আকার ৩MB এর বেশি হবে না");
+      return;
+    }
+
+    setUploadingPhoto(true);
+    const ext = file.name.split(".").pop();
+    const fileName = `teacher_${Date.now()}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("teachers")
+      .upload(fileName, file, { upsert: true });
+
+    if (uploadError) {
+      console.error("Photo upload error:", uploadError);
+      toast.error("ছবি আপলোড হয়নি");
+      setUploadingPhoto(false);
+      return;
+    }
+
+    const { data: urlData } = supabase.storage.from("teachers").getPublicUrl(fileName);
+    setFPhotoUrl(urlData.publicUrl);
+    toast.success("ছবি আপলোড হয়েছে ✓");
+    setUploadingPhoto(false);
+  };
+
   const handleSave = async () => {
     if (!fName.trim()) { toast.error("শিক্ষকের নাম আবশ্যক"); return; }
     setSaving(true);
     const payload = {
       name: fName.trim(),
-      designation: fDesignation.trim(),
       subject: fSubject.trim(),
       phone: fPhone.trim(),
       email: fEmail.trim(),
       education: fEducation.trim(),
+      about: fAbout.trim(),
+      photo_url: fPhotoUrl.trim(),
       is_active: fActive,
     };
 
@@ -121,6 +156,145 @@ export default function AdminTeachersPage() {
     loadTeachers();
   };
 
+  // Render form fields as a function (avoids nested component remounting on mobile)
+  const renderFormFields = () => (
+    <div className="p-6 space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        {/* Photo Upload */}
+        <div className="sm:col-span-2">
+          <label className="block text-warm-white/60 text-xs mb-2 font-medium">শিক্ষকের ছবি</label>
+          <div className="flex items-center gap-3">
+            {/* Preview */}
+            <div className="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"
+              style={{ background: "rgba(201,162,39,0.1)", border: "1.5px solid rgba(201,162,39,0.25)" }}>
+              {fPhotoUrl ? (
+                <img src={fPhotoUrl} alt="preview" className="w-full h-full object-cover" />
+              ) : (
+                <Image size={22} className="text-warm-white/20" />
+              )}
+            </div>
+            <div className="flex-1">
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handlePhotoUpload(file);
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingPhoto}
+                className="flex items-center gap-2 text-sm px-4 py-2 rounded-xl transition-all disabled:opacity-60"
+                style={{ background: "rgba(201,162,39,0.1)", border: "1px solid rgba(201,162,39,0.2)", color: "#c9a227" }}
+              >
+                {uploadingPhoto
+                  ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  : <Upload size={14} />}
+                {uploadingPhoto ? "আপলোড হচ্ছে..." : "ছবি আপলোড করুন"}
+              </button>
+              <p className="text-warm-white/25 text-[11px] mt-1">সর্বোচ্চ ৩MB • JPG/PNG</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Name */}
+        <div className="sm:col-span-2">
+          <label className="block text-warm-white/60 text-xs mb-1.5 font-medium">নাম *</label>
+          <input
+            type="text"
+            value={fName}
+            onChange={(e) => setFName(e.target.value)}
+            placeholder="শিক্ষকের পুরো নাম..."
+            className="input-islamic text-sm w-full"
+          />
+        </div>
+
+        {/* Subject */}
+        <div className="sm:col-span-2">
+          <label className="block text-warm-white/60 text-xs mb-1.5 font-medium">বিষয়</label>
+          <input
+            type="text"
+            value={fSubject}
+            onChange={(e) => setFSubject(e.target.value)}
+            placeholder="যেমন: গণিত, আরবি"
+            className="input-islamic text-sm w-full"
+          />
+        </div>
+
+        {/* Phone */}
+        <div>
+          <label className="block text-warm-white/60 text-xs mb-1.5 font-medium">ফোন নম্বর</label>
+          <input
+            type="tel"
+            value={fPhone}
+            onChange={(e) => setFPhone(e.target.value)}
+            placeholder="০১৮০০-১২৩৪৫৬"
+            className="input-islamic text-sm w-full"
+          />
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="block text-warm-white/60 text-xs mb-1.5 font-medium">ইমেইল</label>
+          <input
+            type="email"
+            value={fEmail}
+            onChange={(e) => setFEmail(e.target.value)}
+            placeholder="teacher@madrasa.edu"
+            className="input-islamic text-sm w-full"
+          />
+        </div>
+
+        {/* Education */}
+        <div className="sm:col-span-2">
+          <label className="block text-warm-white/60 text-xs mb-1.5 font-medium">শিক্ষাগত যোগ্যতা</label>
+          <input
+            type="text"
+            value={fEducation}
+            onChange={(e) => setFEducation(e.target.value)}
+            placeholder="যেমন: কামিল (হাদিস), ঢাকা বিশ্ববিদ্যালয়"
+            className="input-islamic text-sm w-full"
+          />
+        </div>
+
+        {/* About */}
+        <div className="sm:col-span-2">
+          <label className="block text-warm-white/60 text-xs mb-1.5 font-medium">পরিচিতি / About</label>
+          <textarea
+            value={fAbout}
+            onChange={(e) => setFAbout(e.target.value)}
+            placeholder="শিক্ষক সম্পর্কে সংক্ষিপ্ত পরিচিতি লিখুন..."
+            rows={3}
+            className="input-islamic text-sm w-full resize-none"
+            style={{ minHeight: "80px" }}
+          />
+        </div>
+
+        {/* Active toggle */}
+        <div className="sm:col-span-2">
+          <label className="flex items-center gap-3 cursor-pointer p-3 rounded-xl transition-all"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <input
+              type="checkbox"
+              checked={fActive}
+              onChange={(e) => setFActive(e.target.checked)}
+              className="w-4 h-4 accent-green-500 flex-shrink-0"
+            />
+            <span className="text-warm-white/70 text-sm">সক্রিয় শিক্ষক হিসেবে চিহ্নিত করুন</span>
+            <span className={`ml-auto text-xs px-2 py-0.5 rounded-full ${fActive ? "text-green-400 bg-green-400/10" : "text-warm-white/30 bg-white/5"}`}>
+              {fActive ? "সক্রিয়" : "নিষ্ক্রিয়"}
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen islamic-bg">
       <IslamicPattern opacity={0.04} />
@@ -144,7 +318,7 @@ export default function AdminTeachersPage() {
           </button>
         </div>
 
-        {/* ── List ── */}
+        {/* ── Teacher List ── */}
         <div className="p-4 md:p-8 page-enter space-y-3">
           {loading ? (
             <div className="glass-card p-16 text-center">
@@ -163,14 +337,17 @@ export default function AdminTeachersPage() {
             teachers.map((t, i) => (
               <div key={t.id} className="glass-card p-5 animate-slide-up" style={{ animationDelay: `${i * 40}ms` }}>
                 <div className="flex items-start gap-4">
-                  {/* Avatar */}
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold flex-shrink-0"
+                  {/* Avatar / Photo */}
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center text-base font-bold flex-shrink-0 overflow-hidden"
                     style={{
                       background: t.is_active ? "rgba(201,162,39,0.15)" : "rgba(255,255,255,0.05)",
                       border: `1.5px solid ${t.is_active ? "rgba(201,162,39,0.3)" : "rgba(255,255,255,0.1)"}`,
                       color: t.is_active ? "#c9a227" : "rgba(255,255,255,0.2)",
                     }}>
-                    {t.name.charAt(0)}
+                    {t.photo_url
+                      ? <img src={t.photo_url} alt={t.name} className="w-full h-full object-cover" />
+                      : t.name.charAt(0)
+                    }
                   </div>
 
                   {/* Info */}
@@ -185,19 +362,11 @@ export default function AdminTeachersPage() {
                         {t.is_active ? "সক্রিয়" : "নিষ্ক্রিয়"}
                       </button>
                     </div>
-                    <div className="text-warm-white/50 text-xs mb-2">
-                      {[t.designation, t.subject].filter(Boolean).join(" • ")}
-                    </div>
+                    <div className="text-warm-white/50 text-xs mb-2">{t.subject || "বিষয় নির্ধারিত নয়"}</div>
                     <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-warm-white/35">
-                      {t.phone && (
-                        <span className="flex items-center gap-1"><Phone size={11} />{t.phone}</span>
-                      )}
-                      {t.email && (
-                        <span className="flex items-center gap-1"><Mail size={11} />{t.email}</span>
-                      )}
-                      {t.education && (
-                        <span className="flex items-center gap-1"><GraduationCap size={11} />{t.education}</span>
-                      )}
+                      {t.phone && <span className="flex items-center gap-1"><Phone size={11} />{t.phone}</span>}
+                      {t.email && <span className="flex items-center gap-1"><Mail size={11} />{t.email}</span>}
+                      {t.education && <span className="flex items-center gap-1"><GraduationCap size={11} />{t.education}</span>}
                     </div>
                   </div>
 
@@ -264,99 +433,7 @@ export default function AdminTeachersPage() {
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Name */}
-                <div className="sm:col-span-2">
-                  <label className="block text-warm-white/60 text-xs mb-1.5 font-medium">নাম *</label>
-                  <input
-                    type="text"
-                    value={fName}
-                    onChange={(e) => setFName(e.target.value)}
-                    placeholder="শিক্ষকের পুরো নাম..."
-                    className="input-islamic text-sm w-full"
-                    autoFocus
-                  />
-                </div>
-
-                {/* Designation */}
-                <div>
-                  <label className="block text-warm-white/60 text-xs mb-1.5 font-medium">পদবি</label>
-                  <input
-                    type="text"
-                    value={fDesignation}
-                    onChange={(e) => setFDesignation(e.target.value)}
-                    placeholder="যেমন: সিনিয়র শিক্ষক"
-                    className="input-islamic text-sm w-full"
-                  />
-                </div>
-
-                {/* Subject */}
-                <div>
-                  <label className="block text-warm-white/60 text-xs mb-1.5 font-medium">বিষয়</label>
-                  <input
-                    type="text"
-                    value={fSubject}
-                    onChange={(e) => setFSubject(e.target.value)}
-                    placeholder="যেমন: গণিত"
-                    className="input-islamic text-sm w-full"
-                  />
-                </div>
-
-                {/* Phone */}
-                <div>
-                  <label className="block text-warm-white/60 text-xs mb-1.5 font-medium">ফোন নম্বর</label>
-                  <input
-                    type="tel"
-                    value={fPhone}
-                    onChange={(e) => setFPhone(e.target.value)}
-                    placeholder="০১৮০০-১২৩৪৫৬"
-                    className="input-islamic text-sm w-full"
-                  />
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label className="block text-warm-white/60 text-xs mb-1.5 font-medium">ইমেইল</label>
-                  <input
-                    type="email"
-                    value={fEmail}
-                    onChange={(e) => setFEmail(e.target.value)}
-                    placeholder="teacher@madrasa.edu"
-                    className="input-islamic text-sm w-full"
-                  />
-                </div>
-
-                {/* Education */}
-                <div className="sm:col-span-2">
-                  <label className="block text-warm-white/60 text-xs mb-1.5 font-medium">শিক্ষাগত যোগ্যতা</label>
-                  <input
-                    type="text"
-                    value={fEducation}
-                    onChange={(e) => setFEducation(e.target.value)}
-                    placeholder="যেমন: কামিল (হাদিস), ঢাকা বিশ্ববিদ্যালয়"
-                    className="input-islamic text-sm w-full"
-                  />
-                </div>
-
-                {/* Active toggle */}
-                <div className="sm:col-span-2">
-                  <label className="flex items-center gap-3 cursor-pointer p-3 rounded-xl transition-all"
-                    style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                    <input
-                      type="checkbox"
-                      checked={fActive}
-                      onChange={(e) => setFActive(e.target.checked)}
-                      className="w-4 h-4 accent-green-500 flex-shrink-0"
-                    />
-                    <span className="text-warm-white/70 text-sm">সক্রিয় শিক্ষক হিসেবে চিহ্নিত করুন</span>
-                    <span className={`ml-auto text-xs px-2 py-0.5 rounded-full ${fActive ? "text-green-400 bg-green-400/10" : "text-warm-white/30 bg-white/5"}`}>
-                      {fActive ? "সক্রিয়" : "নিষ্ক্রিয়"}
-                    </span>
-                  </label>
-                </div>
-              </div>
-            </div>
+            {renderFormFields()}
 
             {/* Modal Footer */}
             <div className="flex gap-3 px-6 pb-6">

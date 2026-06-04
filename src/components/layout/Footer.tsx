@@ -72,6 +72,7 @@ export default function Footer() {
                 { to: "/", label: "হোম" },
                 { to: "/notices", label: "নোটিশ বোর্ড" },
                 { to: "/routines", label: "রুটিন" },
+                { to: "/teachers", label: "শিক্ষকবৃন্দ" },
                 { to: "/chat", label: "লাইভ চ্যাট" },
                 { to: "/#contact", label: "যোগাযোগ" },
                 { to: "/admin", label: "এডমিন প্যানেল" },
