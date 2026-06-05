@@ -19,7 +19,6 @@ export default function SubjectDetailPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"overview" | "homework" | "suggestion">("overview");
 
-  // Fix: scroll to top when page loads (prevents jump-to-bottom on navigate)
   useLayoutEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [id]);
@@ -62,7 +61,6 @@ export default function SubjectDetailPage() {
       })));
     }
 
-    console.log("Subject detail loaded:", subjectId);
     setLoading(false);
   };
 
@@ -88,8 +86,6 @@ export default function SubjectDetailPage() {
       </div>
     );
   }
-
-  const progress = Math.round((subject.completedClasses / subject.totalClasses) * 100);
 
   const tabs = [
     { id: "overview", label: "পরিচিতি", icon: BookOpen },
@@ -120,10 +116,6 @@ export default function SubjectDetailPage() {
             <div className="text-warm-white font-bold text-lg truncate">{subject.name}</div>
             <div className="text-warm-white/40 text-xs">{subject.nameEn}</div>
           </div>
-          <div className="text-sm font-bold px-3 py-1.5 rounded-full"
-            style={{ background: `${subject.color}22`, color: subject.color, border: `1px solid ${subject.color}33` }}>
-            {progress}% সম্পন্ন
-          </div>
         </div>
       </div>
 
@@ -132,42 +124,25 @@ export default function SubjectDetailPage() {
         <div className="glass-card p-8 mb-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10 -translate-y-1/2 translate-x-1/2"
             style={{ background: subject.color }} />
-          <div className="relative z-10">
-            <div className="flex items-center gap-6 mb-6">
-              <div className="w-24 h-24 rounded-3xl flex items-center justify-center text-4xl font-arabic shadow-2xl"
-                style={{
-                  background: `linear-gradient(135deg, ${subject.color}22, ${subject.color}44)`,
-                  border: `2px solid ${subject.color}44`, color: subject.color,
-                }}>
-                {subject.icon}
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-warm-white mb-2">{subject.name}</h1>
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl flex items-center justify-center"
-                    style={{ background: "rgba(201,162,39,0.15)" }}>
-                    <User size={14} className="text-islamic-gold-400" />
-                  </div>
-                  <div>
-                    <div className="text-warm-white/80 text-sm font-semibold">{subject.teacher}</div>
-                    <div className="text-warm-white/40 text-xs">{subject.teacherDesignation}</div>
-                  </div>
-                </div>
-              </div>
+          <div className="relative z-10 flex items-center gap-6">
+            <div className="w-24 h-24 rounded-3xl flex items-center justify-center text-4xl font-arabic shadow-2xl flex-shrink-0"
+              style={{
+                background: `linear-gradient(135deg, ${subject.color}22, ${subject.color}44)`,
+                border: `2px solid ${subject.color}44`, color: subject.color,
+              }}>
+              {subject.icon}
             </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-warm-white/60">ক্লাস অগ্রগতি</span>
-                <span className="text-warm-white/80 font-semibold">{subject.completedClasses} / {subject.totalClasses} ক্লাস</span>
-              </div>
-              <div className="w-full h-3 rounded-full" style={{ background: "rgba(255,255,255,0.08)" }}>
-                <div className="h-full rounded-full"
-                  style={{
-                    width: `${progress}%`,
-                    background: `linear-gradient(90deg, ${subject.color}, ${subject.color}cc)`,
-                    boxShadow: `0 0 10px ${subject.color}66`,
-                    transition: "width 1s ease",
-                  }} />
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl md:text-3xl font-bold text-warm-white mb-3">{subject.name}</h1>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: "rgba(201,162,39,0.15)" }}>
+                  <User size={14} className="text-islamic-gold-400" />
+                </div>
+                <div>
+                  <div className="text-warm-white/80 text-sm font-semibold">{subject.teacher}</div>
+                  <div className="text-warm-white/40 text-xs">{subject.teacherDesignation}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -194,20 +169,28 @@ export default function SubjectDetailPage() {
               <h3 className="text-lg font-bold text-islamic-gold-400 mb-4 flex items-center gap-2">
                 <BookOpen size={18} /> বিষয় পরিচিতি
               </h3>
-              <p className="text-warm-white/70 leading-relaxed">{subject.description}</p>
+              <IslamicBorder />
+              <p className="text-warm-white/70 leading-relaxed mt-4">{subject.description}</p>
             </div>
+
+            {/* Quick stats — homework & suggestion counts only */}
             <div className="grid grid-cols-2 gap-4">
-              {[
-                { label: "মোট ক্লাস", value: subject.totalClasses },
-                { label: "সম্পন্ন ক্লাস", value: subject.completedClasses },
-                { label: "বাকি ক্লাস", value: subject.totalClasses - subject.completedClasses },
-                { label: "অগ্রগতি", value: `${progress}%` },
-              ].map((item) => (
-                <div key={item.label} className="glass-card p-4 text-center">
-                  <div className="text-2xl font-bold text-warm-white mb-1">{item.value}</div>
-                  <div className="text-warm-white/50 text-xs">{item.label}</div>
+              <div className="glass-card p-5 text-center">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3"
+                  style={{ background: "rgba(201,162,39,0.12)", border: "1px solid rgba(201,162,39,0.2)" }}>
+                  <ClipboardList size={18} className="text-islamic-gold-400" />
                 </div>
-              ))}
+                <div className="text-2xl font-bold text-warm-white mb-1">{homework.length}</div>
+                <div className="text-warm-white/50 text-xs">হোমওয়ার্ক</div>
+              </div>
+              <div className="glass-card p-5 text-center">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3"
+                  style={{ background: "rgba(45,157,100,0.12)", border: "1px solid rgba(45,157,100,0.2)" }}>
+                  <Lightbulb size={18} className="text-islamic-green-400" />
+                </div>
+                <div className="text-2xl font-bold text-warm-white mb-1">{suggestions.length}</div>
+                <div className="text-warm-white/50 text-xs">সাজেশন</div>
+              </div>
             </div>
           </div>
         )}
