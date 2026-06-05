@@ -4,7 +4,7 @@
 
 import { Link } from "react-router-dom";
 import { IslamicBorder, CrescentMoon, StarOrnament } from "@/components/layout/IslamicPattern";
-import { Phone, MapPin, BookOpen, Code2 } from "lucide-react";
+import { Phone, MapPin, BookOpen, Code2, MessageCircle } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -93,18 +93,62 @@ export default function Footer() {
             <h4 className="text-islamic-gold-400 font-bold mb-5 flex items-center justify-center md:justify-end gap-2">
               <StarOrnament size={14} /> যোগাযোগ
             </h4>
+
+            {/* Madrasa Name */}
+            <div className="mb-4">
+              <div className="text-warm-white/80 text-sm font-bold leading-snug">গাজীর চট মদিনাতুল উলুম</div>
+              <div className="text-warm-white/80 text-sm font-bold">ফাজিল মাদরাসা</div>
+              <div className="text-warm-white/35 text-xs mt-0.5">Gazirchat Madinatul Ulum Fazil Madrasa</div>
+            </div>
+
             <div className="space-y-3">
-              <div className="flex items-center gap-2 justify-center md:justify-end text-warm-white/60 text-sm">
-                <MapPin size={14} className="text-islamic-gold-400 flex-shrink-0" />
-                গাজীর চট, চট্টগ্রাম
+              {/* Address */}
+              <div className="flex items-start gap-2 justify-center md:justify-end text-warm-white/60 text-sm">
+                <MapPin size={14} className="text-islamic-gold-400 flex-shrink-0 mt-0.5" />
+                <span className="text-right leading-relaxed">
+                  মাদ্রাসা রোড, গাজী চট (বাইপাইল),<br />
+                  আশুলিয়া, সাভার, ঢাকা।
+                </span>
               </div>
+
+              {/* Phone 1 */}
               <div className="flex items-center gap-2 justify-center md:justify-end text-warm-white/60 text-sm">
                 <Phone size={14} className="text-islamic-gold-400 flex-shrink-0" />
-                ০১৮০০-০০০০০০
+                <a href="tel:+8801518734669" className="hover:text-islamic-gold-400 transition-colors">
+                  +88 01518-734669
+                </a>
               </div>
+
+              {/* Phone 2 */}
+              <div className="flex items-center gap-2 justify-center md:justify-end text-warm-white/60 text-sm">
+                <Phone size={14} className="text-islamic-gold-400 flex-shrink-0" />
+                <a href="tel:+8801712822642" className="hover:text-islamic-gold-400 transition-colors">
+                  +88 01712-822642
+                </a>
+              </div>
+
+              {/* Session */}
               <div className="flex items-center gap-2 justify-center md:justify-end text-warm-white/60 text-sm">
                 <BookOpen size={14} className="text-islamic-gold-400 flex-shrink-0" />
                 সেশন: ২০২৫-২০২৬
+              </div>
+
+              {/* WhatsApp Group */}
+              <div className="flex justify-center md:justify-end mt-1">
+                <a
+                  href="https://chat.whatsapp.com/E3uwX8AJIxj2YWSp6wmwdG"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:scale-105"
+                  style={{
+                    background: "rgba(37,211,102,0.1)",
+                    border: "1px solid rgba(37,211,102,0.25)",
+                    color: "#25d366",
+                  }}
+                >
+                  <MessageCircle size={13} />
+                  Official WhatsApp Group
+                </a>
               </div>
             </div>
           </div>
