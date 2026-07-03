@@ -1,5 +1,5 @@
 // ============================================================
-// App.tsx - Supabase Auth-based Protected Routes
+// App.tsx — Routes + Bottom Nav + WhatsApp button
 // ============================================================
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import { useState, useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import BottomNav from "@/components/layout/BottomNav";
 import HomePage from "@/pages/HomePage";
 import SubjectDetailPage from "@/pages/SubjectDetailPage";
 import ChatPage from "@/pages/ChatPage";
@@ -27,7 +28,6 @@ import NotFound from "@/pages/NotFound";
 import WhatsAppButton from "@/components/features/WhatsAppButton";
 import supabase from "@/lib/supabase";
 
-// Protected Route - Supabase session check
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
@@ -50,13 +50,12 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return isAuth ? <>{children}</> : <Navigate to="/admin" replace />;
 }
 
-// Public layout with Navbar & Footer
 function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Navbar />
-      <main>{children}</main>
-      <Footer />
+      <main className="pb-24 md:pb-0">{children}</main>
+      <div className="hidden md:block"><Footer /></div>
     </>
   );
 }
@@ -65,35 +64,34 @@ export default function App() {
   return (
     <BrowserRouter>
       <Toaster
-        position="top-right"
+        position="top-center"
         toastOptions={{
           style: {
-            background: "rgba(13, 74, 46, 0.95)",
-            border: "1px solid rgba(201, 162, 39, 0.3)",
-            color: "#f8f4e8",
-            backdropFilter: "blur(12px)",
+            background: "#ffffff",
+            border: "1px solid rgba(21,128,61,0.2)",
+            color: "#1e293b",
+            borderRadius: "1rem",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+            fontSize: "0.9rem",
           },
           duration: 3000,
         }}
       />
 
-      {/* WhatsApp floating button — visible on all pages */}
       <WhatsAppButton />
 
       <Routes>
-        {/* Public Routes */}
+        {/* Public */}
         <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
         <Route path="/subject/:id" element={<PublicLayout><SubjectDetailPage /></PublicLayout>} />
-        <Route path="/chat" element={<PublicLayout><ChatPage /></PublicLayout>} />
+        <Route path="/chat" element={<ChatPage />} />
         <Route path="/notices" element={<PublicLayout><NoticesPage /></PublicLayout>} />
         <Route path="/routines" element={<PublicLayout><RoutinesPage /></PublicLayout>} />
         <Route path="/teachers" element={<PublicLayout><TeachersPage /></PublicLayout>} />
         <Route path="/teachers/:id" element={<PublicLayout><TeacherDetailPage /></PublicLayout>} />
 
-        {/* Admin Login */}
+        {/* Admin */}
         <Route path="/admin" element={<AdminLoginPage />} />
-
-        {/* Admin Protected Routes */}
         <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/subjects" element={<ProtectedRoute><AdminSubjectsPage /></ProtectedRoute>} />
         <Route path="/admin/homework" element={<ProtectedRoute><AdminHomeworkPage /></ProtectedRoute>} />
@@ -103,9 +101,10 @@ export default function App() {
         <Route path="/admin/notices" element={<ProtectedRoute><AdminNoticesPage /></ProtectedRoute>} />
         <Route path="/admin/routines" element={<ProtectedRoute><AdminRoutinesPage /></ProtectedRoute>} />
 
-        {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+
+      <BottomNav />
     </BrowserRouter>
   );
 }

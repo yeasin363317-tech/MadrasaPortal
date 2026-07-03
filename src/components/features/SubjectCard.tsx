@@ -1,10 +1,19 @@
 // ============================================================
-// SubjectCard - বিষয়ের কার্ড কম্পোনেন্ট
+// SubjectCard — Colorful pastel card (light theme)
 // ============================================================
 
 import { useNavigate } from "react-router-dom";
-import { User, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { Subject } from "@/types";
+
+const PALETTES = [
+  { bg: "linear-gradient(135deg,#dcfce7,#bbf7d0)", icon: "#15803d", iconBg: "#dcfce7", border: "#86efac", text: "#14532d" },
+  { bg: "linear-gradient(135deg,#dbeafe,#bfdbfe)", icon: "#1d4ed8", iconBg: "#dbeafe", border: "#93c5fd", text: "#1e3a8a" },
+  { bg: "linear-gradient(135deg,#ede9fe,#ddd6fe)", icon: "#7c3aed", iconBg: "#ede9fe", border: "#c4b5fd", text: "#4c1d95" },
+  { bg: "linear-gradient(135deg,#ffedd5,#fed7aa)", icon: "#c2410c", iconBg: "#ffedd5", border: "#fdba74", text: "#7c2d12" },
+  { bg: "linear-gradient(135deg,#fce7f3,#fbcfe8)", icon: "#be185d", iconBg: "#fce7f3", border: "#f9a8d4", text: "#831843" },
+  { bg: "linear-gradient(135deg,#ccfbf1,#99f6e4)", icon: "#0f766e", iconBg: "#ccfbf1", border: "#5eead4", text: "#134e4a" },
+];
 
 interface SubjectCardProps {
   subject: Subject;
@@ -13,70 +22,34 @@ interface SubjectCardProps {
 
 export default function SubjectCard({ subject, index }: SubjectCardProps) {
   const navigate = useNavigate();
-  const progress = Math.round((subject.completedClasses / subject.totalClasses) * 100);
-
-  const getDelay = () => `${index * 80}ms`;
+  const pal = PALETTES[index % PALETTES.length];
 
   return (
-    <div
-      className="glass-card p-6 flex flex-col gap-4 animate-slide-up"
-      style={{ animationDelay: getDelay() }}
+    <button
+      onClick={() => navigate(`/subject/${subject.id}`)}
+      className="text-left rounded-3xl p-5 transition-all duration-250 hover:scale-[1.03] active:scale-[0.97] animate-slide-up group w-full"
+      style={{
+        background: pal.bg,
+        border: `1px solid ${pal.border}`,
+        animationDelay: `${index * 50}ms`,
+        boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
+      }}
     >
-      {/* Header */}
-      <div className="flex items-start gap-4">
-        {/* Icon */}
-        <div
-          className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 font-arabic shadow-lg"
-          style={{
-            background: `linear-gradient(135deg, ${subject.color}22, ${subject.color}44)`,
-            border: `1px solid ${subject.color}44`,
-            color: subject.color,
-          }}
-        >
-          {subject.icon}
-        </div>
-
-        {/* Title */}
-        <div className="flex-1 min-w-0">
-          <h3 className="text-warm-white font-bold text-lg leading-tight mb-1 font-bangla">
-            {subject.name}
-          </h3>
-          <span className="text-warm-white/40 text-xs font-mono">{subject.nameEn}</span>
-        </div>
-
-
+      <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-3"
+        style={{ background: "rgba(255,255,255,0.7)" }}>
+        {subject.icon}
       </div>
-
-      {/* Description */}
-      <p className="text-warm-white/60 text-sm leading-relaxed line-clamp-2">
-        {subject.description}
-      </p>
-
-      {/* Teacher Info */}
-      <div
-        className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
-        style={{ background: "rgba(201, 162, 39, 0.08)", border: "1px solid rgba(201, 162, 39, 0.15)" }}
-      >
-        <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ background: "linear-gradient(135deg, #c9a22722, #c9a22744)" }}>
-          <User size={14} className="text-islamic-gold-400" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="text-warm-white text-sm font-semibold truncate">{subject.teacher}</div>
-          <div className="text-warm-white/40 text-xs">{subject.teacherDesignation}</div>
-        </div>
+      <div className="font-bold text-sm leading-tight mb-1" style={{ color: pal.text }}>
+        {subject.name}
       </div>
-
-
-
-      {/* Details Button */}
-      <button
-        onClick={() => navigate(`/subject/${subject.id}`)}
-        className="btn-gold w-full flex items-center justify-center gap-2 text-sm group mt-1"
-      >
-        <span>বিস্তারিত দেখুন</span>
-        <ArrowRight size={16} className="transition-transform duration-200 group-hover:translate-x-1" />
-      </button>
-    </div>
+      <div className="text-xs opacity-60 mb-3" style={{ color: pal.text }}>
+        {subject.nameEn}
+      </div>
+      <div className="text-xs text-edu-slate-500 line-clamp-2 mb-3">{subject.description}</div>
+      <div className="flex items-center gap-1 text-xs font-semibold transition-transform duration-200 group-hover:translate-x-1"
+        style={{ color: pal.icon }}>
+        বিস্তারিত <ArrowRight size={12} />
+      </div>
+    </button>
   );
 }
