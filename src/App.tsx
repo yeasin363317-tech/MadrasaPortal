@@ -54,7 +54,8 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Navbar />
-      <main className="pb-24 md:pb-0">{children}</main>
+      {/* pt accounts for fixed navbar height + OnSpace banner offset */}
+      <main className="pb-24 md:pb-0" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 76px)" }}>{children}</main>
       <div className="hidden md:block"><Footer /></div>
     </>
   );

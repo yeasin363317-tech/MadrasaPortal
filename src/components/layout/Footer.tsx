@@ -1,9 +1,9 @@
 // ============================================================
-// Footer — Minimal modern light-theme footer
+// Footer — Complete with contact, links, developer credit
 // ============================================================
 
 import { Link } from "react-router-dom";
-import { Phone, MapPin, MessageCircle, Code2 } from "lucide-react";
+import { Phone, MapPin, ExternalLink, Code2 } from "lucide-react";
 
 const WA_GROUP_LINK = "https://chat.whatsapp.com/E3uwX8AJIxj2YWSp6wmwdG";
 
@@ -17,27 +17,23 @@ function WaIcon({ size = 14 }: { size?: number }) {
 
 export default function Footer() {
   return (
-    <footer className="bg-edu-slate-800 text-white mt-0">
-      <div className="max-w-6xl mx-auto px-6 py-14">
+    <footer style={{ background: "#1e293b", color: "#ffffff" }}>
+      <div className="max-w-6xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
-                style={{ background: "linear-gradient(135deg,#15803d,#22c55e)" }}>
-                🕌
-              </div>
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
+                style={{ background: "linear-gradient(135deg,#15803d,#22c55e)" }}>🕌</div>
               <div>
                 <div className="font-bold text-sm leading-tight">গাজীর চট মদিনাতুল উলুম</div>
                 <div className="text-white/50 text-xs">ফাজিল মাদরাসা</div>
               </div>
             </div>
-            <p className="text-white/50 text-sm leading-relaxed">
+            <p className="text-white/50 text-sm leading-relaxed mb-4">
               দাখিল ৮ম শ্রেণীর শিক্ষার্থীদের জন্য আধুনিক শিক্ষা পোর্টাল।
             </p>
-            <div className="mt-4 font-arabic text-edu-gold-400 text-lg">
-              بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
-            </div>
+            <div className="font-arabic text-edu-gold-400 text-lg">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
           </div>
 
           {/* Quick Links */}
@@ -64,22 +60,20 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-white/80 mb-4 text-sm uppercase tracking-wider">যোগাযোগ</h4>
             <div className="space-y-3">
-              <div className="text-sm font-bold text-white/90">গাজীর চট মদিনাতুল উলুম ফাজিল মাদরাসা</div>
-              <div className="text-white/35 text-xs">Gazirchat Madinatul Ulum Fazil Madrasa</div>
-
+              <div>
+                <div className="text-sm font-bold text-white/90">গাজীর চট মদিনাতুল উলুম ফাজিল মাদরাসা</div>
+                <div className="text-white/35 text-xs mt-0.5">Gazirchat Madinatul Ulum Fazil Madrasa</div>
+              </div>
               <div className="flex items-start gap-2 text-white/60 text-sm">
                 <MapPin size={14} className="text-edu-green-400 flex-shrink-0 mt-0.5" />
                 <span className="leading-relaxed">মাদ্রাসা রোড, গাজী চট (বাইপাইল),<br />আশুলিয়া, সাভার, ঢাকা।</span>
               </div>
-
               {["+88 01518-734669", "+8801712-822642"].map((num) => (
                 <a key={num} href={`tel:${num.replace(/[^+\d]/g, "")}`}
                   className="flex items-center gap-2 text-white/60 hover:text-edu-green-400 transition-colors text-sm">
-                  <Phone size={14} className="text-edu-green-400 flex-shrink-0" />
-                  {num}
+                  <Phone size={14} className="text-edu-green-400 flex-shrink-0" />{num}
                 </a>
               ))}
-
               <a href={WA_GROUP_LINK} target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all hover:scale-105"
                 style={{ background: "rgba(37,211,102,0.12)", border: "1px solid rgba(37,211,102,0.25)", color: "#25d366" }}>
@@ -89,14 +83,17 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-white/30 text-xs">
-            © {new Date().getFullYear()} গাজীর চট মদিনাতুল উলুম ফাজিল মাদরাসা
+            © {new Date().getFullYear()} গাজীর চট মদিনাতুল উলুম ফাজিল মাদরাসা। সর্বস্বত্ব সংরক্ষিত।
           </p>
-          <div className="flex items-center gap-2 text-xs text-white/30">
+          <a href="https://yeasin.freedev.app" target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-2 text-xs text-white/40 hover:text-edu-green-400 transition-colors">
             <Code2 size={12} className="text-edu-green-400" />
-            Created by <span className="text-edu-green-400 font-semibold">Developer Yeasin Arafat</span>
-          </div>
+            Designed & Developed by
+            <span className="text-edu-green-400 font-semibold">Yeasin Arafat</span>
+            <ExternalLink size={11} />
+          </a>
         </div>
       </div>
     </footer>

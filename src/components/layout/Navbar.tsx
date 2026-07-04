@@ -37,13 +37,10 @@ export default function Navbar() {
           scrolled ? "py-2" : "py-3"
         }`}
         style={{
-          background: scrolled
-            ? "rgba(255,255,255,0.95)"
-            : "rgba(255,255,255,0.85)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          background: scrolled ? "#ffffff" : "rgba(255,255,255,0.97)",
           borderBottom: scrolled ? "1px solid rgba(0,0,0,0.08)" : "1px solid transparent",
           boxShadow: scrolled ? "0 2px 20px rgba(0,0,0,0.08)" : "none",
+          paddingTop: "calc(env(safe-area-inset-top, 0px) + 60px)",
         }}
       >
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">

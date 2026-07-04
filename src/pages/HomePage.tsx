@@ -1,23 +1,22 @@
 // ============================================================
-// HomePage — Premium Light Theme Redesign
+// HomePage — Premium Light Theme
 // ============================================================
 
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AnnouncementBanner from "@/components/features/AnnouncementBanner";
 import type { Announcement } from "@/types";
-import { Search, ArrowRight, Bell, BookOpen, Users, Calendar, Star, Phone, MapPin, ExternalLink, ChevronRight } from "lucide-react";
+import { Search, ArrowRight, Bell, BookOpen, Star, Phone, MapPin, ExternalLink, Code2 } from "lucide-react";
 import type { Subject } from "@/types";
 import supabase from "@/lib/supabase";
 
-// Subject palette: rotate through 6 colors
 const PALETTES = [
-  { bg: "linear-gradient(135deg,#dcfce7,#bbf7d0)", icon: "#15803d", iconBg: "#dcfce7", border: "#86efac", text: "#14532d" },
-  { bg: "linear-gradient(135deg,#dbeafe,#bfdbfe)", icon: "#1d4ed8", iconBg: "#dbeafe", border: "#93c5fd", text: "#1e3a8a" },
-  { bg: "linear-gradient(135deg,#ede9fe,#ddd6fe)", icon: "#7c3aed", iconBg: "#ede9fe", border: "#c4b5fd", text: "#4c1d95" },
-  { bg: "linear-gradient(135deg,#ffedd5,#fed7aa)", icon: "#c2410c", iconBg: "#ffedd5", border: "#fdba74", text: "#7c2d12" },
-  { bg: "linear-gradient(135deg,#fce7f3,#fbcfe8)", icon: "#be185d", iconBg: "#fce7f3", border: "#f9a8d4", text: "#831843" },
-  { bg: "linear-gradient(135deg,#ccfbf1,#99f6e4)", icon: "#0f766e", iconBg: "#ccfbf1", border: "#5eead4", text: "#134e4a" },
+  { bg: "linear-gradient(135deg,#dcfce7,#bbf7d0)", icon: "#15803d", border: "#86efac", text: "#14532d" },
+  { bg: "linear-gradient(135deg,#dbeafe,#bfdbfe)", icon: "#1d4ed8", border: "#93c5fd", text: "#1e3a8a" },
+  { bg: "linear-gradient(135deg,#ede9fe,#ddd6fe)", icon: "#7c3aed", border: "#c4b5fd", text: "#4c1d95" },
+  { bg: "linear-gradient(135deg,#ffedd5,#fed7aa)", icon: "#c2410c", border: "#fdba74", text: "#7c2d12" },
+  { bg: "linear-gradient(135deg,#fce7f3,#fbcfe8)", icon: "#be185d", border: "#f9a8d4", text: "#831843" },
+  { bg: "linear-gradient(135deg,#ccfbf1,#99f6e4)", icon: "#0f766e", border: "#5eead4", text: "#134e4a" },
 ];
 
 function WaIcon({ size = 22 }: { size?: number }) {
@@ -33,6 +32,7 @@ export default function HomePage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [mapLoaded, setMapLoaded] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => { loadData(); }, []);
@@ -43,15 +43,14 @@ export default function HomePage() {
       supabase.from("subjects").select("*").order("created_at", { ascending: true }),
       supabase.from("announcements").select("*").order("created_at", { ascending: false }),
     ]);
-    const { data } = subjectsRes;
     if (announcementsRes.data) {
       setAnnouncements(announcementsRes.data.map((a: any) => ({
         id: a.id, title: a.title, content: a.content,
         type: a.type as Announcement["type"], createdAt: a.created_at,
       })));
     }
-    if (data) {
-      setSubjects(data.map((s: any) => ({
+    if (subjectsRes.data) {
+      setSubjects(subjectsRes.data.map((s: any) => ({
         id: s.id, name: s.name, nameEn: s.name_en, teacher: s.teacher,
         teacherDesignation: s.teacher_designation, icon: s.icon, color: s.color,
         description: s.description, totalClasses: s.total_classes,
@@ -69,44 +68,29 @@ export default function HomePage() {
   return (
     <div className="min-h-screen" style={{ background: "#fafafa" }}>
 
-      {/* ══════════════════════════════════════════
-          HERO SECTION
-      ══════════════════════════════════════════ */}
-      <section className="relative overflow-hidden pt-20 pb-0">
-        {/* Background gradient blobs */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full opacity-30"
+      {/* ══ HERO ══ */}
+      <section className="relative overflow-hidden pt-32 pb-0">
+        <div className="absolute inset-0 pointer-events-none" style={{ willChange: "auto" }}>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full opacity-25"
             style={{ background: "radial-gradient(ellipse, #dcfce7 0%, transparent 70%)" }} />
-          <div className="absolute top-20 -right-20 w-64 h-64 rounded-full opacity-20"
-            style={{ background: "radial-gradient(circle, #bbf7d0, transparent)" }} />
-          <div className="absolute top-40 -left-10 w-48 h-48 rounded-full opacity-20"
-            style={{ background: "radial-gradient(circle, #fef3c7, transparent)" }} />
         </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 pt-10 pb-16 text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold mb-6 animate-fade-in"
+        <div className="relative max-w-5xl mx-auto px-4 pt-4 pb-12 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold mb-5"
             style={{ background: "#dcfce7", border: "1px solid #86efac", color: "#15803d" }}>
             <Star size={12} fill="#15803d" />
             দাখিল ৮ম শ্রেণী • সেশন ২০২৫–২০২৬
             <Star size={12} fill="#15803d" />
           </div>
-
-          {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-4 animate-slide-up">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-3">
             <span className="text-green-gradient">গাজীর চট</span>{" "}
             <span className="text-edu-slate-800">মদিনাতুল উলুম</span>
           </h1>
-          <div className="text-xl md:text-2xl font-bold text-edu-slate-600 mb-3 animate-slide-up" style={{ animationDelay: "80ms" }}>
-            ফাজিল মাদরাসা
-          </div>
-          <p className="text-edu-slate-500 text-base md:text-lg max-w-xl mx-auto mb-8 leading-relaxed animate-slide-up" style={{ animationDelay: "120ms" }}>
-            তোমার সকল পাঠ্যবিষয়, হোমওয়ার্ক, সাজেশন ও নোটিশ এক জায়গায়। 
-            শিক্ষাকে আনন্দময় করে তোলো!
+          <div className="text-xl md:text-2xl font-bold text-edu-slate-600 mb-3">ফাজিল মাদরাসা</div>
+          <p className="text-edu-slate-500 text-base md:text-lg max-w-xl mx-auto mb-8 leading-relaxed">
+            তোমার সকল পাঠ্যবিষয়, হোমওয়ার্ক, সাজেশন ও নোটিশ এক জায়গায়।
           </p>
-
-          {/* CTA Buttons */}
-          <div className="flex items-center justify-center gap-3 flex-wrap mb-12 animate-slide-up" style={{ animationDelay: "160ms" }}>
+          <div className="flex items-center justify-center gap-3 flex-wrap mb-10">
             <a href="#subjects" className="btn-primary text-base px-8 py-3.5">
               <BookOpen size={18} /> বিষয় দেখুন
             </a>
@@ -114,9 +98,7 @@ export default function HomePage() {
               <Bell size={18} /> নোটিশ বোর্ড
             </Link>
           </div>
-
-          {/* Quick Stats */}
-          <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto animate-fade-in" style={{ animationDelay: "200ms" }}>
+          <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto">
             {[
               { value: subjects.length || "—", label: "বিষয়" },
               { value: "১৫৬", label: "শিক্ষার্থী" },
@@ -130,46 +112,11 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-
-        {/* Curved bottom */}
-        <div style={{ height: 40, background: "#f0fdf4", clipPath: "ellipse(80% 100% at 50% 100%)" }} />
+        <div style={{ height: 36, background: "#f0fdf4", clipPath: "ellipse(80% 100% at 50% 100%)" }} />
       </section>
 
-      {/* ══════════════════════════════════════════
-          WHATSAPP GROUP BOX
-      ══════════════════════════════════════════ */}
-      <section className="bg-edu-green-50 py-6 px-4">
-        <div className="max-w-2xl mx-auto">
-          <a
-            href="https://chat.whatsapp.com/E3uwX8AJIxj2YWSp6wmwdG"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-4 p-4 rounded-3xl transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
-            style={{
-              background: "linear-gradient(135deg, #15803d, #22c55e)",
-              boxShadow: "0 6px 24px rgba(21,128,61,0.3)",
-            }}
-          >
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
-              style={{ background: "rgba(255,255,255,0.2)" }}>
-              <WaIcon size={24} />
-            </div>
-            <div className="flex-1">
-              <div className="text-white font-bold text-sm">Join Our Official WhatsApp Group</div>
-              <div className="text-white/70 text-xs mt-0.5">সর্বশেষ আপডেট ও নোটিশ পেতে গ্রুপে যোগ দিন</div>
-            </div>
-            <div className="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold text-white"
-              style={{ background: "rgba(255,255,255,0.2)" }}>
-              Join →
-            </div>
-          </a>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-          QUICK NAV PILLS
-      ══════════════════════════════════════════ */}
-      <section className="bg-edu-green-50 pb-8 px-4">
+      {/* ══ QUICK NAV ══ */}
+      <section className="bg-edu-green-50 py-5 px-4">
         <div className="max-w-2xl mx-auto">
           <div className="grid grid-cols-4 gap-3">
             {[
@@ -189,17 +136,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          SUBJECTS SECTION
-      ══════════════════════════════════════════ */}
-      <section id="subjects" className="py-12 px-4">
+      {/* ══ SUBJECTS ══ */}
+      <section id="subjects" className="py-10 px-4">
         <div className="max-w-5xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-7">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-3"
-              style={{ background: "#dcfce7", color: "#15803d" }}>
-              📚 দাখিল ৮ম শ্রেণী
-            </div>
+              style={{ background: "#dcfce7", color: "#15803d" }}>📚 দাখিল ৮ম শ্রেণী</div>
             <h2 className="text-3xl font-bold text-edu-slate-800 mb-2">
               সকল <span className="text-green-gradient">বিষয়সমূহ</span>
             </h2>
@@ -208,19 +150,12 @@ export default function HomePage() {
 
           <AnnouncementBanner announcements={announcements} />
 
-          {/* Search */}
-          <div className="relative mb-8 max-w-md mx-auto">
+          <div className="relative mb-7 max-w-md mx-auto">
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-edu-slate-400" />
-            <input
-              type="text"
-              placeholder="বিষয় খুঁজুন..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="edu-input pl-11"
-            />
+            <input type="text" placeholder="বিষয় খুঁজুন..." value={search}
+              onChange={(e) => setSearch(e.target.value)} className="edu-input pl-11" />
           </div>
 
-          {/* Grid */}
           {loading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {[...Array(8)].map((_, i) => (
@@ -228,45 +163,22 @@ export default function HomePage() {
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="text-5xl mb-4">🔍</div>
-              <div className="text-edu-slate-400 text-lg">কোনো বিষয় পাওয়া যায়নি</div>
-            </div>
+            <div className="text-center py-16"><div className="text-5xl mb-4">🔍</div>
+              <div className="text-edu-slate-400 text-lg">কোনো বিষয় পাওয়া যায়নি</div></div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {filtered.map((subject, i) => {
                 const pal = PALETTES[i % PALETTES.length];
                 return (
-                  <button
-                    key={subject.id}
-                    onClick={() => navigate(`/subject/${subject.id}`)}
-                    className="text-left rounded-3xl p-5 transition-all duration-250 hover:scale-[1.03] active:scale-[0.97] animate-slide-up group"
-                    style={{
-                      background: pal.bg,
-                      border: `1px solid ${pal.border}`,
-                      animationDelay: `${i * 50}ms`,
-                      boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
-                    }}
-                  >
-                    {/* Icon */}
-                    <div
-                      className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-3"
-                      style={{ background: "rgba(255,255,255,0.7)" }}
-                    >
-                      {subject.icon}
-                    </div>
-                    {/* Name */}
-                    <div className="font-bold text-sm leading-tight mb-1" style={{ color: pal.text }}>
-                      {subject.name}
-                    </div>
-                    <div className="text-xs opacity-60 mb-3" style={{ color: pal.text }}>
-                      {subject.nameEn}
-                    </div>
-                    {/* Arrow */}
+                  <button key={subject.id} onClick={() => navigate(`/subject/${subject.id}`)}
+                    className="text-left rounded-3xl p-5 transition-all duration-250 hover:scale-[1.03] active:scale-[0.97] group"
+                    style={{ background: pal.bg, border: `1px solid ${pal.border}`, boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-3"
+                      style={{ background: "rgba(255,255,255,0.7)" }}>{subject.icon}</div>
+                    <div className="font-bold text-sm leading-tight mb-1" style={{ color: pal.text }}>{subject.name}</div>
+                    <div className="text-xs opacity-60 mb-2" style={{ color: pal.text }}>{subject.nameEn}</div>
                     <div className="flex items-center gap-1 text-xs font-semibold transition-transform duration-200 group-hover:translate-x-1"
-                      style={{ color: pal.icon }}>
-                      বিস্তারিত <ArrowRight size={12} />
-                    </div>
+                      style={{ color: pal.icon }}>বিস্তারিত <ArrowRight size={12} /></div>
                   </button>
                 );
               })}
@@ -275,35 +187,45 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          QURAN VERSE BANNER
-      ══════════════════════════════════════════ */}
+      {/* ══ WHATSAPP GROUP ══ */}
+      <section className="py-5 px-4" style={{ background: "#f0fdf4" }}>
+        <div className="max-w-2xl mx-auto">
+          <a href="https://chat.whatsapp.com/E3uwX8AJIxj2YWSp6wmwdG" target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-4 p-4 rounded-3xl transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
+            style={{ background: "linear-gradient(135deg, #15803d, #22c55e)", boxShadow: "0 6px 24px rgba(21,128,61,0.3)" }}>
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+              style={{ background: "rgba(255,255,255,0.2)" }}><WaIcon size={24} /></div>
+            <div className="flex-1">
+              <div className="text-white font-bold text-sm">Join Our Official WhatsApp Group</div>
+              <div className="text-white/70 text-xs mt-0.5">সর্বশেষ আপডেট ও নোটিশ পেতে গ্রুপে যোগ দিন</div>
+            </div>
+            <div className="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold text-white"
+              style={{ background: "rgba(255,255,255,0.2)" }}>Join →</div>
+          </a>
+        </div>
+      </section>
+
+      {/* ══ QURAN VERSE ══ */}
       <section className="py-8 px-4">
         <div className="max-w-2xl mx-auto rounded-3xl p-8 text-center"
           style={{ background: "linear-gradient(135deg, #15803d, #166534)", boxShadow: "0 8px 32px rgba(21,128,61,0.2)" }}>
           <div className="font-arabic text-2xl md:text-3xl text-edu-gold-300 mb-3 leading-loose">
             ﴿ اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ ﴾
           </div>
-          <p className="text-white/80 text-sm">
-            "পড়ো তোমার রবের নামে যিনি সৃষ্টি করেছেন।" — সূরা আল-আলাক, আয়াত ১
-          </p>
+          <p className="text-white/80 text-sm">"পড়ো তোমার রবের নামে যিনি সৃষ্টি করেছেন।" — সূরা আল-আলাক, আয়াত ১</p>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          CONTACT SECTION
-      ══════════════════════════════════════════ */}
-      <section id="contact" className="py-12 px-4 section-bg-gray">
+      {/* ══ CONTACT ══ */}
+      <section id="contact" className="py-10 px-4" style={{ background: "#f8fafc" }}>
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8">
+          <div className="text-center mb-7">
             <h2 className="text-3xl font-bold text-edu-slate-800 mb-2">
               <span className="text-green-gradient">যোগাযোগ</span> করুন
             </h2>
             <p className="text-edu-slate-500 text-sm">মাদরাসার সাথে সরাসরি যোগাযোগ করুন</p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Info */}
             <div className="edu-card p-7">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-5 badge-green">
                 🕌 সরকারি স্বীকৃত মাদরাসা
@@ -311,37 +233,29 @@ export default function HomePage() {
               <h3 className="text-xl font-bold text-edu-slate-800 mb-1">গাজীর চট মদিনাতুল উলুম</h3>
               <p className="text-edu-green-600 font-semibold text-sm mb-1">ফাজিল মাদরাসা</p>
               <p className="text-edu-slate-400 text-xs mb-5">Gazirchat Madinatul Ulum Fazil Madrasa</p>
-
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: "#dcfce7" }}>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#dcfce7" }}>
                     <MapPin size={16} className="text-edu-green-600" />
                   </div>
                   <div>
                     <div className="text-xs text-edu-slate-400 font-semibold uppercase tracking-wider mb-0.5">ঠিকানা</div>
-                    <p className="text-edu-slate-700 text-sm leading-relaxed">
-                      মাদ্রাসা রোড, গাজী চট (বাইপাইল),<br />আশুলিয়া, সাভার, ঢাকা।
-                    </p>
+                    <p className="text-edu-slate-700 text-sm leading-relaxed">মাদ্রাসা রোড, গাজী চট (বাইপাইল),<br />আশুলিয়া, সাভার, ঢাকা।</p>
                   </div>
                 </div>
-
                 {["+88 01518-734669", "+8801712-822642"].map((num) => (
                   <a key={num} href={`tel:${num.replace(/[^+\d]/g, "")}`}
                     className="flex items-center gap-3 hover:bg-edu-green-50 p-2 rounded-xl transition-colors -mx-2">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                      style={{ background: "#dcfce7" }}>
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#dcfce7" }}>
                       <Phone size={16} className="text-edu-green-600" />
                     </div>
                     <span className="text-edu-slate-700 text-sm font-semibold">{num}</span>
                   </a>
                 ))}
-
                 <a href="https://chat.whatsapp.com/E3uwX8AJIxj2YWSp6wmwdG" target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 rounded-2xl transition-all hover:scale-[1.01]"
                   style={{ background: "#f0fdf4", border: "1px solid #86efac" }}>
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: "#25d366" }}>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#25d366" }}>
                     <WaIcon size={18} />
                   </div>
                   <div>
@@ -353,21 +267,34 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Map */}
+            {/* Google Map — lazy load, isolated to prevent GPU glitch */}
             <div className="edu-card overflow-hidden" style={{ minHeight: 320 }}>
               <div className="flex items-center gap-2 px-5 py-3 border-b border-edu-slate-100">
                 <MapPin size={14} className="text-edu-green-600" />
                 <span className="text-edu-slate-600 text-xs font-semibold">গুগল ম্যাপে লোকেশন</span>
               </div>
-              <div className="relative flex-1" style={{ height: 260 }}>
-                <iframe
-                  title="Madrasa Location"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3648.3!2d90.2993!3d23.8975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDUzJzUxLjAiTiA5MMKwMTcnNTcuNSJF!5e0!3m2!1sen!2sbd!4v1700000000000!5m2!1sen!2sbd"
-                  width="100%" height="260"
-                  style={{ border: 0 }}
-                  allowFullScreen loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
+              <div style={{ height: 256, position: "relative", background: "#f1f5f9" }}>
+                {!mapLoaded ? (
+                  <button
+                    onClick={() => setMapLoaded(true)}
+                    className="absolute inset-0 flex flex-col items-center justify-center gap-3 transition-colors hover:bg-edu-green-50"
+                    style={{ background: "#f0fdf4" }}
+                  >
+                    <div className="text-4xl">🗺</div>
+                    <div className="text-edu-green-700 font-semibold text-sm">ম্যাপ লোড করুন</div>
+                    <div className="text-edu-slate-400 text-xs">ক্লিক করলে Google Map লোড হবে</div>
+                  </button>
+                ) : (
+                  <iframe
+                    title="Madrasa Location"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3648.3!2d90.2993!3d23.8975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDUzJzUxLjAiTiA5MMKwMTcnNTcuNSJF!5e0!3m2!1sen!2sbd!4v1700000000000!5m2!1sen!2sbd"
+                    width="100%" height="256"
+                    style={{ border: 0, display: "block" }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                )}
               </div>
               <a href="https://maps.google.com/?q=Gazirchat+Madinatul+Ulum+Fazil+Madrasa+Ashulia+Savar+Dhaka"
                 target="_blank" rel="noopener noreferrer"
@@ -375,6 +302,39 @@ export default function HomePage() {
                 <ExternalLink size={12} /> Google Maps-এ দেখুন
               </a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ DEVELOPER SECTION ══ */}
+      <section className="py-8 px-4">
+        <div className="max-w-md mx-auto">
+          <div className="edu-card p-6 text-center"
+            style={{ background: "linear-gradient(135deg, #f8fafc, #f0fdf4)", border: "1px solid #bbf7d0" }}>
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl"
+              style={{ background: "linear-gradient(135deg, #15803d, #22c55e)", boxShadow: "0 4px 16px rgba(21,128,61,0.25)" }}>
+              👨‍💻
+            </div>
+            <div className="text-edu-slate-400 text-xs uppercase tracking-widest font-semibold mb-1">
+              Designed & Developed by
+            </div>
+            <h3 className="text-xl font-bold text-edu-slate-800 mb-0.5">Yeasin Arafat</h3>
+            <div className="text-edu-green-600 text-sm font-semibold mb-5">Full Stack Developer</div>
+            <a
+              href="https://yeasin.freedev.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-200 hover:scale-105 active:scale-95"
+              style={{
+                background: "linear-gradient(135deg, #15803d, #22c55e)",
+                color: "#ffffff",
+                boxShadow: "0 4px 16px rgba(21,128,61,0.3)",
+              }}
+            >
+              <Code2 size={15} />
+              Visit Website
+              <ExternalLink size={13} />
+            </a>
           </div>
         </div>
       </section>
