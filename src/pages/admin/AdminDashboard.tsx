@@ -78,12 +78,12 @@ export default function AdminDashboard() {
   const loadDashboard = async () => {
     setLoading(true);
     const [subjectsRes, hwRes, sugRes, msgRes, teachersRes, noticesRes] = await Promise.all([
-      supabase.from("subjects").select("id", { count: "exact" }),
+      supabase.from("subjects").select("*", { count: "exact", head: true }),
       supabase.from("homework").select("*").order("created_at", { ascending: false }),
-      supabase.from("suggestions").select("id", { count: "exact" }),
+      supabase.from("suggestions").select("*", { count: "exact", head: true }),
       supabase.from("chat_messages").select("*").order("created_at", { ascending: false }).limit(5),
-      supabase.from("teachers").select("id", { count: "exact" }).eq("is_active", true),
-      supabase.from("notices").select("id", { count: "exact" }),
+      supabase.from("teachers").select("*", { count: "exact", head: true }).eq("is_active", true),
+      supabase.from("notices").select("*", { count: "exact", head: true }),
     ]);
     const homework = hwRes.data || [];
     const messages = msgRes.data || [];

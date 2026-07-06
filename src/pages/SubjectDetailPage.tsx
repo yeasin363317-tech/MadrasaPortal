@@ -23,6 +23,9 @@ export default function SubjectDetailPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"overview" | "homework" | "suggestion">("overview");
 
+  // Safe fallback color so hero card never crashes on missing color
+  const safeColor = (c?: string | null) => (c && c.startsWith("#") ? c : "#15803d");
+
   useLayoutEffect(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, [id]);
   useEffect(() => { if (id) loadData(id); }, [id]);
 
@@ -79,6 +82,8 @@ export default function SubjectDetailPage() {
     );
   }
 
+  const sc = safeColor(subject?.color);
+
   const getImportanceBadge = (imp: string) => {
     if (imp === "অতি গুরুত্বপূর্ণ") return { color: "#dc2626", bg: "#fef2f2", border: "#fca5a5" };
     if (imp === "গুরুত্বপূর্ণ") return { color: "#d97706", bg: "#fffbeb", border: "#fcd34d" };
@@ -108,20 +113,20 @@ export default function SubjectDetailPage() {
 
         {/* Hero Card */}
         <div className="edu-card p-6 mb-6 overflow-hidden relative"
-          style={{ background: `linear-gradient(135deg, ${subject.color}15, ${subject.color}08)`, border: `1px solid ${subject.color}30` }}>
+          style={{ background: `linear-gradient(135deg, ${sc}15, ${sc}08)`, border: `1px solid ${sc}30` }}>
           <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-10 -translate-y-1/2 translate-x-1/2"
-            style={{ background: subject.color }} />
+            style={{ background: sc }} />
           <div className="relative flex items-center gap-5">
             <div className="w-20 h-20 rounded-3xl flex items-center justify-center text-3xl flex-shrink-0"
-              style={{ background: "rgba(255,255,255,0.9)", border: `2px solid ${subject.color}30`, boxShadow: `0 4px 16px ${subject.color}20` }}>
+              style={{ background: "rgba(255,255,255,0.9)", border: `2px solid ${sc}30`, boxShadow: `0 4px 16px ${sc}20` }}>
               {subject.icon}
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="text-2xl font-bold text-edu-slate-800 mb-2">{subject.name}</h1>
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: `${subject.color}15` }}>
-                  <User size={14} style={{ color: subject.color }} />
+                  style={{ background: `${sc}15` }}>
+                  <User size={14} style={{ color: sc }} />
                 </div>
                 <div>
                   <div className="text-edu-slate-700 text-sm font-semibold">{subject.teacher}</div>
