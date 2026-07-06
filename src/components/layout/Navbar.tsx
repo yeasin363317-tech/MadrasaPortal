@@ -1,23 +1,89 @@
 // ============================================================
 // Navbar — Floating rounded premium header (Light Theme)
+// Auto-hide on scroll-down, show on scroll-up / tap
 // ============================================================
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Home, MessageCircle, Bell, Calendar, GraduationCap, BookOpen, Shield } from "lucide-react";
+import { Menu, X, Home, MessageCircle, Bell, Calendar, GraduationCap, Shield } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // visible = whether header is shown (translateY 0 vs -100%)
+  const [visible, setVisible] = useState(true);
   const location = useLocation();
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+  const lastScrollY = useRef(0);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const ticking = useRef(false);
+
+  // Clear auto-hide timer helper
+  const clearHideTimer = useCallback(() => {
+    if (hideTimer.current) { clearTimeout(hideTimer.current); hideTimer.current = null; }
   }, []);
 
-  useEffect(() => { setIsOpen(false); }, [location]);
+  // Show header and restart the at-top auto-hide timer
+  const showHeader = useCallback(() => {
+    setVisible(true);
+    clearHideTimer();
+    // Only start auto-hide timer when near the top of the page
+    if (window.scrollY < 40) {
+      hideTimer.current = setTimeout(() => setVisible(false), 1500);
+    }
+  }, [clearHideTimer]);
+
+  useEffect(() => {
+    lastScrollY.current = window.scrollY;
+
+    const handleScroll = () => {
+      if (ticking.current) return;
+      ticking.current = true;
+      requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+        const delta = currentY - lastScrollY.current;
+
+        if (currentY < 10) {
+          // At the very top — always show, start auto-hide
+          setVisible(true);
+          setScrolled(false);
+          clearHideTimer();
+          hideTimer.current = setTimeout(() => setVisible(false), 1500);
+        } else if (delta > 4) {
+          // Scrolling DOWN — hide header
+          clearHideTimer();
+          setVisible(false);
+          setScrolled(true);
+        } else if (delta < -4) {
+          // Scrolling UP — show header, no auto-hide
+          clearHideTimer();
+          setVisible(true);
+          setScrolled(true);
+        }
+
+        lastScrollY.current = currentY;
+        ticking.current = false;
+      });
+    };
+
+    // Show on any tap/touch anywhere on page
+    const handleTouch = () => showHeader();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    document.addEventListener("touchstart", handleTouch, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("touchstart", handleTouch);
+      clearHideTimer();
+    };
+  }, [clearHideTimer, showHeader]);
+
+  // Close mobile menu and show header on route change
+  useEffect(() => {
+    setIsOpen(false);
+    showHeader();
+  }, [location, showHeader]);
 
   const navLinks = [
     { href: "/", label: "হোম", icon: Home },
@@ -33,7 +99,7 @@ export default function Navbar() {
     <>
       {/* ── Main Nav Bar ── */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 ${
           scrolled ? "py-2" : "py-3"
         }`}
         style={{
@@ -41,6 +107,10 @@ export default function Navbar() {
           borderBottom: scrolled ? "1px solid rgba(0,0,0,0.08)" : "1px solid transparent",
           boxShadow: scrolled ? "0 2px 20px rgba(0,0,0,0.08)" : "none",
           paddingTop: "calc(env(safe-area-inset-top, 0px) + 60px)",
+          // Smooth slide-up/down — only on mobile (md breakpoint handled via CSS)
+          transform: visible ? "translateY(0)" : "translateY(-110%)",
+          transition: "transform 350ms cubic-bezier(0.4,0,0.2,1), box-shadow 300ms ease, background 300ms ease",
+          willChange: "transform",
         }}
       >
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">

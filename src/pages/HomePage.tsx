@@ -5,7 +5,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AnnouncementBanner from "@/components/features/AnnouncementBanner";
-import type { Announcement } from "@/types";
 import { Search, ArrowRight, Bell, BookOpen, Star, Phone, MapPin, ExternalLink, Code2 } from "lucide-react";
 import type { Subject } from "@/types";
 import supabase from "@/lib/supabase";
@@ -29,7 +28,6 @@ function WaIcon({ size = 22 }: { size?: number }) {
 
 export default function HomePage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -39,16 +37,7 @@ export default function HomePage() {
 
   const loadData = async () => {
     setLoading(true);
-    const [subjectsRes, announcementsRes] = await Promise.all([
-      supabase.from("subjects").select("*").order("created_at", { ascending: true }),
-      supabase.from("announcements").select("*").order("created_at", { ascending: false }),
-    ]);
-    if (announcementsRes.data) {
-      setAnnouncements(announcementsRes.data.map((a: any) => ({
-        id: a.id, title: a.title, content: a.content,
-        type: a.type as Announcement["type"], createdAt: a.created_at,
-      })));
-    }
+    const subjectsRes = await supabase.from("subjects").select("*").order("created_at", { ascending: true });
     if (subjectsRes.data) {
       setSubjects(subjectsRes.data.map((s: any) => ({
         id: s.id, name: s.name, nameEn: s.name_en, teacher: s.teacher,
@@ -148,7 +137,7 @@ export default function HomePage() {
             <p className="text-edu-slate-500 text-sm">প্রতিটি বিষয়ে ক্লিক করে হোমওয়ার্ক ও সাজেশন দেখুন</p>
           </div>
 
-          <AnnouncementBanner announcements={announcements} />
+          <AnnouncementBanner />
 
           <div className="relative mb-7 max-w-md mx-auto">
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-edu-slate-400" />
