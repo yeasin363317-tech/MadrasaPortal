@@ -25,6 +25,8 @@ import RoutinesPage from "@/pages/RoutinesPage";
 import TeachersPage from "@/pages/TeachersPage";
 import TeacherDetailPage from "@/pages/TeacherDetailPage";
 import NotFound from "@/pages/NotFound";
+import NoticeDetailPage from "@/pages/NoticeDetailPage";
+import HomeworkDetailPage from "@/pages/HomeworkDetailPage";
 import WhatsAppButton from "@/components/features/WhatsAppButton";
 import supabase from "@/lib/supabase";
 
@@ -90,6 +92,8 @@ export default function App() {
         <Route path="/routines" element={<PublicLayout><RoutinesPage /></PublicLayout>} />
         <Route path="/teachers" element={<PublicLayout><TeachersPage /></PublicLayout>} />
         <Route path="/teachers/:id" element={<PublicLayout><TeacherDetailPage /></PublicLayout>} />
+        <Route path="/notices/:id" element={<PublicLayout><NoticeDetailPage /></PublicLayout>} />
+        <Route path="/homework/:id" element={<PublicLayout><HomeworkDetailPage /></PublicLayout>} />
 
         {/* Admin */}
         <Route path="/admin" element={<AdminLoginPage />} />

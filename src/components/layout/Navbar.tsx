@@ -15,6 +15,8 @@ export default function Navbar() {
   const location = useLocation();
 
   const lastScrollY = useRef(0);
+  // Track how many px the user has scrolled upward continuously
+  const scrollUpAccum = useRef(0);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ticking = useRef(false);
 
@@ -23,15 +25,20 @@ export default function Navbar() {
     if (hideTimer.current) { clearTimeout(hideTimer.current); hideTimer.current = null; }
   }, []);
 
-  // Show header and restart the at-top auto-hide timer
+  // Start the auto-hide timer (used when at top or after showing header)
+  const startHideTimer = useCallback(() => {
+    clearHideTimer();
+    hideTimer.current = setTimeout(() => setVisible(false), 1800);
+  }, [clearHideTimer]);
+
+  // Show header explicitly (e.g. on route change or initial load)
   const showHeader = useCallback(() => {
     setVisible(true);
     clearHideTimer();
-    // Only start auto-hide timer when near the top of the page
     if (window.scrollY < 40) {
-      hideTimer.current = setTimeout(() => setVisible(false), 1500);
+      startHideTimer();
     }
-  }, [clearHideTimer]);
+  }, [clearHideTimer, startHideTimer]);
 
   useEffect(() => {
     lastScrollY.current = window.scrollY;
@@ -47,18 +54,26 @@ export default function Navbar() {
           // At the very top — always show, start auto-hide
           setVisible(true);
           setScrolled(false);
-          clearHideTimer();
-          hideTimer.current = setTimeout(() => setVisible(false), 1500);
+          scrollUpAccum.current = 0;
+          startHideTimer();
         } else if (delta > 4) {
-          // Scrolling DOWN — hide header
+          // Scrolling DOWN — hide header immediately, reset upward accumulator
           clearHideTimer();
           setVisible(false);
           setScrolled(true);
-        } else if (delta < -4) {
-          // Scrolling UP — show header, no auto-hide
-          clearHideTimer();
-          setVisible(true);
-          setScrolled(true);
+          scrollUpAccum.current = 0;
+        } else if (delta < -3) {
+          // Scrolling UP — accumulate; only show after 90px upward movement
+          scrollUpAccum.current += Math.abs(delta);
+          if (scrollUpAccum.current >= 90) {
+            clearHideTimer();
+            setVisible(true);
+            setScrolled(true);
+            // Auto-hide after 2s if no further scroll-up activity
+            startHideTimer();
+          }
+        } else {
+          // Very small movement — don't reset accumulator, don't act
         }
 
         lastScrollY.current = currentY;
@@ -66,22 +81,18 @@ export default function Navbar() {
       });
     };
 
-    // Show on any tap/touch anywhere on page
-    const handleTouch = () => showHeader();
-
     window.addEventListener("scroll", handleScroll, { passive: true });
-    document.addEventListener("touchstart", handleTouch, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      document.removeEventListener("touchstart", handleTouch);
       clearHideTimer();
     };
-  }, [clearHideTimer, showHeader]);
+  }, [clearHideTimer, startHideTimer]);
 
   // Close mobile menu and show header on route change
   useEffect(() => {
     setIsOpen(false);
+    scrollUpAccum.current = 0;
     showHeader();
   }, [location, showHeader]);
 

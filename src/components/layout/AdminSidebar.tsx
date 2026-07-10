@@ -106,6 +106,16 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             <Home size={16} />
             ওয়েবসাইটে যান
           </Link>
+          <a
+            href="https://yeasin.freedev.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-edu-slate-500 hover:bg-edu-green-50 hover:text-edu-green-600 transition-all text-sm"
+            style={{ border: "1px solid #e2e8f0" }}
+          >
+            <Shield size={16} />
+            Developer Website
+          </a>
           <button onClick={logout}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 transition-all text-sm">
             <LogOut size={17} />

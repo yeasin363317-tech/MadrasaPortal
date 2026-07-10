@@ -3,7 +3,8 @@
 // ============================================================
 
 import { useState, useEffect, useLayoutEffect } from "react";
-import { Bell, Pin, Search, AlertTriangle, Info, CheckCircle, AlertCircle, Calendar, ChevronDown } from "lucide-react";
+import { Bell, Pin, Search, AlertTriangle, Info, CheckCircle, AlertCircle, Calendar, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import supabase from "@/lib/supabase";
 
 interface Notice {
@@ -31,7 +32,7 @@ export default function NoticesPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useLayoutEffect(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, []);
   useEffect(() => { loadNotices(); }, []);
@@ -132,7 +133,7 @@ export default function NoticesPage() {
                   <span className="text-edu-gold-600 text-xs font-bold uppercase tracking-wider">পিন করা</span>
                 </div>
                 <div className="space-y-3">
-                  {pinned.map((n, i) => <NoticeCard key={n.id} notice={n} index={i} expanded={expanded} onToggle={setExpanded} pinned />)}
+                  {pinned.map((n, i) => <NoticeCard key={n.id} notice={n} index={i} pinned />)}
                 </div>
               </div>
             )}
@@ -147,7 +148,7 @@ export default function NoticesPage() {
                   </div>
                 )}
                 <div className="space-y-3">
-                  {regular.map((n, i) => <NoticeCard key={n.id} notice={n} index={i} expanded={expanded} onToggle={setExpanded} />)}
+                  {regular.map((n, i) => <NoticeCard key={n.id} notice={n} index={i} />)}
                 </div>
               </div>
             )}
@@ -160,20 +161,20 @@ export default function NoticesPage() {
   );
 }
 
-function NoticeCard({ notice, index, expanded, onToggle, pinned }:
-  { notice: Notice; index: number; expanded: string | null; onToggle: (id: string | null) => void; pinned?: boolean }) {
+function NoticeCard({ notice, index, pinned }:
+  { notice: Notice; index: number; expanded?: string | null; onToggle?: (id: string | null) => void; pinned?: boolean }) {
   const cfg = TYPE_CONFIG[notice.type] || TYPE_CONFIG.info;
   const { Icon } = cfg;
-  const isExpanded = expanded === notice.id;
+  const navigate = useNavigate();
 
   return (
     <div
-      className="edu-card overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-card-hover animate-slide-up"
+      className="edu-card overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 animate-slide-up"
       style={{
         animationDelay: `${index * 50}ms`,
         border: pinned ? `1px solid #fcd34d` : undefined,
       }}
-      onClick={() => onToggle(isExpanded ? null : notice.id)}
+      onClick={() => navigate(`/notices/${notice.id}`)}
     >
       {/* Type accent line */}
       <div className="h-1" style={{ background: cfg.color }} />
@@ -206,7 +207,7 @@ function NoticeCard({ notice, index, expanded, onToggle, pinned }:
               )}
             </div>
 
-            <p className={`text-edu-slate-600 text-sm leading-relaxed transition-all ${isExpanded ? "" : "line-clamp-2"}`}>
+            <p className="text-edu-slate-600 text-sm leading-relaxed line-clamp-2">
               {notice.content}
             </p>
 
@@ -215,8 +216,8 @@ function NoticeCard({ notice, index, expanded, onToggle, pinned }:
                 <Calendar size={11} /> {formatDate(notice.created_at)}
               </div>
               <div className="flex items-center gap-1 text-xs font-semibold" style={{ color: cfg.color }}>
-                {isExpanded ? "কম দেখুন" : "বিস্তারিত"}
-                <ChevronDown size={13} className={`transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                বিস্তারিত পড়ুন
+                <ArrowRight size={12} />
               </div>
             </div>
           </div>

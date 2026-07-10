@@ -1,8 +1,9 @@
+
 // ============================================================
 // SubjectDetailPage — Light theme with homework & suggestions
 // ============================================================
 
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useLayoutEffect, useState, useEffect } from "react";
 import { ArrowLeft, User, BookOpen, ClipboardList, Lightbulb, AlertCircle, Clock, Star } from "lucide-react";
 import type { Homework, Suggestion, Subject } from "@/types";
@@ -194,7 +195,9 @@ export default function SubjectDetailPage() {
                 <div className="text-edu-slate-400 text-lg">কোনো হোমওয়ার্ক নেই</div>
               </div>
             ) : homework.map((hw, i) => (
-              <div key={hw.id} className="edu-card p-5 animate-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
+              <Link key={hw.id} to={`/homework/${hw.id}`}
+                className="edu-card p-5 animate-slide-up block hover:shadow-md transition-all"
+                style={{ animationDelay: `${i * 60}ms`, textDecoration: 'none' }}>
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0"
                     style={{ background: hw.isUrgent ? "#fef2f2" : "#f0fdf4", border: hw.isUrgent ? "1px solid #fca5a5" : "1px solid #86efac" }}>
@@ -215,12 +218,12 @@ export default function SubjectDetailPage() {
                     )}
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
 
-        {/* Suggestions Tab */}
+        {/* Suggestion Tab */}
         {activeTab === "suggestion" && (
           <div className="space-y-4 animate-fade-in">
             {suggestions.length === 0 ? (
