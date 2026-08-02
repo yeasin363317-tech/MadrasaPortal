@@ -46,9 +46,6 @@ export interface ChatMessage {
   timestamp: string;
   isAdmin: boolean;
   isDeleted?: boolean;
-  userUuid?: string;
-  replyToId?: string | null;
-  replyPreview?: string;
 }
 
 export interface AdminUser {

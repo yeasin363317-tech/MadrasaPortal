@@ -3,7 +3,6 @@
 // ============================================================
 
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 
 const WA_NUMBER = "8801309407154";
 const WA_URL = `https://wa.me/${WA_NUMBER}`;
@@ -17,12 +16,8 @@ function WaIcon({ size = 24 }: { size?: number }) {
 }
 
 export default function WhatsAppButton() {
-  const location = useLocation();
   const [showTooltip, setShowTooltip] = useState(false);
   const [dismissed, setDismissed] = useState(false);
-
-  // Hide on chat page so button doesn't overlap input
-  if (location.pathname === "/chat") return null;
 
   useEffect(() => {
     if (dismissed) return;

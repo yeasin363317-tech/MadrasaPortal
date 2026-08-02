@@ -5,7 +5,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import { useState, useEffect } from "react";
-import { NotificationProvider } from "@/contexts/NotificationContext";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
@@ -21,7 +20,6 @@ import AdminChatPage from "@/pages/admin/AdminChatPage";
 import AdminTeachersPage from "@/pages/admin/AdminTeachersPage";
 import AdminNoticesPage from "@/pages/admin/AdminNoticesPage";
 import AdminRoutinesPage from "@/pages/admin/AdminRoutinesPage";
-import AdminAnnouncementsPage from "@/pages/admin/AdminAnnouncementsPage";
 import NoticesPage from "@/pages/NoticesPage";
 import RoutinesPage from "@/pages/RoutinesPage";
 import TeachersPage from "@/pages/TeachersPage";
@@ -68,7 +66,6 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <BrowserRouter>
-      <NotificationProvider>
       <Toaster
         position="top-center"
         toastOptions={{
@@ -109,13 +106,10 @@ export default function App() {
         <Route path="/admin/notices" element={<ProtectedRoute><AdminNoticesPage /></ProtectedRoute>} />
         <Route path="/admin/routines" element={<ProtectedRoute><AdminRoutinesPage /></ProtectedRoute>} />
 
-        <Route path="/admin/announcements" element={<ProtectedRoute><AdminAnnouncementsPage /></ProtectedRoute>} />
-
         <Route path="*" element={<NotFound />} />
       </Routes>
 
       <BottomNav />
-      </NotificationProvider>
     </BrowserRouter>
   );
 }

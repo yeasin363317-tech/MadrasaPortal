@@ -6,17 +6,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Home, MessageCircle, Bell, Calendar, GraduationCap, Shield } from "lucide-react";
-import { useNotifications } from "@/contexts/NotificationContext";
-
-function NavBadge({ count }: { count: number }) {
-  if (count <= 0) return null;
-  return (
-    <span className="ml-1 inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full text-white font-bold"
-      style={{ background: "#ef4444", fontSize: "10px", padding: "0 4px", lineHeight: 1 }}>
-      {count > 9 ? "9+" : count}
-    </span>
-  );
-}
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -115,7 +104,6 @@ export default function Navbar() {
     { href: "/chat", label: "চ্যাট", icon: MessageCircle },
   ];
 
-  const { chatCount, noticesCount } = useNotifications();
   const isActive = (href: string) => location.pathname === href;
 
   return (
@@ -165,8 +153,6 @@ export default function Navbar() {
               >
                 <link.icon size={15} />
                 {link.label}
-                {link.href === "/notices" && !isActive(link.href) && <NavBadge count={noticesCount} />}
-                {link.href === "/chat"    && !isActive(link.href) && <NavBadge count={chatCount} />}
               </Link>
             ))}
             <Link

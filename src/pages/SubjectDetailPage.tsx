@@ -8,7 +8,6 @@ import { useLayoutEffect, useState, useEffect } from "react";
 import { ArrowLeft, User, BookOpen, ClipboardList, Lightbulb, AlertCircle, Clock, Star } from "lucide-react";
 import type { Homework, Suggestion, Subject } from "@/types";
 import supabase from "@/lib/supabase";
-import { useNotifications } from "@/contexts/NotificationContext";
 
 const TABS = [
   { id: "overview", label: "পরিচিতি", icon: BookOpen, emoji: "📖" },
@@ -19,7 +18,6 @@ const TABS = [
 export default function SubjectDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { markHomeworkSeen } = useNotifications();
   const [subject, setSubject] = useState<Subject | null>(null);
   const [homework, setHomework] = useState<Homework[]>([]);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -31,9 +29,6 @@ export default function SubjectDetailPage() {
 
   useLayoutEffect(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, [id]);
   useEffect(() => { if (id) loadData(id); }, [id]);
-
-  // Mark homework seen whenever this subject page is opened
-  useEffect(() => { markHomeworkSeen(); }, [markHomeworkSeen]);
 
   const loadData = async (subjectId: string) => {
     setLoading(true);
