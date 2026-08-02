@@ -6,6 +6,7 @@ import { useState, useEffect, useLayoutEffect } from "react";
 import { Bell, Pin, Search, AlertTriangle, Info, CheckCircle, AlertCircle, Calendar, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import supabase from "@/lib/supabase";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 interface Notice {
   id: string;
@@ -33,9 +34,13 @@ export default function NoticesPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const navigate = useNavigate();
+  const { markNoticesSeen } = useNotifications();
 
   useLayoutEffect(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, []);
-  useEffect(() => { loadNotices(); }, []);
+  useEffect(() => {
+    loadNotices();
+    markNoticesSeen(); // clear badge when page opens
+  }, []);
 
   const loadNotices = async () => {
     setLoading(true);

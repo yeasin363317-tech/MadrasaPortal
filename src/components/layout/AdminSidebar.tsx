@@ -5,7 +5,7 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, BookOpen, ClipboardList, Lightbulb,
-  MessageSquare, LogOut, Shield, X, ChevronRight, User, Bell, Calendar, Home
+  MessageSquare, LogOut, Shield, X, ChevronRight, User, Bell, Calendar, Home, Megaphone
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -21,6 +21,7 @@ const navItems = [
   { href: "/admin/suggestions", label: "সাজেশন", icon: Lightbulb },
   { href: "/admin/teachers", label: "শিক্ষক", icon: User },
   { href: "/admin/notices", label: "নোটিশ", icon: Bell },
+  { href: "/admin/announcements", label: "ঘোষণা ব্যানার", icon: Megaphone },
   { href: "/admin/routines", label: "রুটিন", icon: Calendar },
   { href: "/admin/chat", label: "চ্যাট মডারেশন", icon: MessageSquare },
 ];
