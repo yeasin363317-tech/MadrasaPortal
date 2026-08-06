@@ -153,7 +153,7 @@ export default function ChatPage() {
 
       {/* Chat Header */}
       <div className="flex-shrink-0 border-b border-edu-slate-200 px-4 py-3"
-        style={{ background: "#ffffff", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
+        style={{ background: "#ffffff", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", paddingTop: "calc(env(safe-area-inset-top, 0px) + 64px)" }}>
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={() => navigate("/")}

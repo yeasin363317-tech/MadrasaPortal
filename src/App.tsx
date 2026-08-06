@@ -29,6 +29,7 @@ import NoticeDetailPage from "@/pages/NoticeDetailPage";
 import HomeworkDetailPage from "@/pages/HomeworkDetailPage";
 import WhatsAppButton from "@/components/features/WhatsAppButton";
 import supabase from "@/lib/supabase";
+import { useLocation } from "react-router-dom";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = useState(true);
@@ -63,6 +64,12 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
+function WhatsAppButtonConditional() {
+  const location = useLocation();
+  if (location.pathname === "/chat" || location.pathname.startsWith("/admin")) return null;
+  return <WhatsAppButton />;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -81,7 +88,7 @@ export default function App() {
         }}
       />
 
-      <WhatsAppButton />
+      <WhatsAppButtonConditional />
 
       <Routes>
         {/* Public */}
