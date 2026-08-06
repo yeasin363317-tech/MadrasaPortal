@@ -48,7 +48,13 @@ export default function ChatPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const isFirstLoad = useRef(true);
 
-  useLayoutEffect(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, []);
+  // Lock body scroll while chat is mounted so the fixed container always fills the viewport
+  useLayoutEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.scrollTo({ top: 0, behavior: "instant" });
+    return () => { document.body.style.overflow = prev; };
+  }, []);
 
   useEffect(() => {
     if (!senderName) setShowNameModal(true);
@@ -120,7 +126,7 @@ export default function ChatPage() {
   });
 
   return (
-    <div className="flex flex-col" style={{ height: "100dvh", background: "#f8fafc", overflow: "hidden" }}>
+    <div className="flex flex-col" style={{ position: "fixed", inset: 0, background: "#f8fafc", overflow: "hidden", zIndex: 10 }}>
 
       {/* Name Modal */}
       {showNameModal && (
