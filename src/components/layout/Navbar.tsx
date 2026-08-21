@@ -1,44 +1,22 @@
 // ============================================================
 // Navbar — Floating rounded premium header (Light Theme)
-// Auto-hide on scroll-down, show on scroll-up / tap
+// Hide on scroll-down, show on scroll-up (90px threshold)
+// Always visible on initial load — no auto-hide timer
 // ============================================================
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Home, MessageCircle, Bell, Calendar, GraduationCap, Shield } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  // visible = whether header is shown (translateY 0 vs -100%)
   const [visible, setVisible] = useState(true);
   const location = useLocation();
 
   const lastScrollY = useRef(0);
-  // Track how many px the user has scrolled upward continuously
   const scrollUpAccum = useRef(0);
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ticking = useRef(false);
-
-  // Clear auto-hide timer helper
-  const clearHideTimer = useCallback(() => {
-    if (hideTimer.current) { clearTimeout(hideTimer.current); hideTimer.current = null; }
-  }, []);
-
-  // Start the auto-hide timer (used when at top or after showing header)
-  const startHideTimer = useCallback(() => {
-    clearHideTimer();
-    hideTimer.current = setTimeout(() => setVisible(false), 1800);
-  }, [clearHideTimer]);
-
-  // Show header explicitly (e.g. on route change or initial load)
-  const showHeader = useCallback(() => {
-    setVisible(true);
-    clearHideTimer();
-    if (window.scrollY < 40) {
-      startHideTimer();
-    }
-  }, [clearHideTimer, startHideTimer]);
 
   useEffect(() => {
     lastScrollY.current = window.scrollY;
@@ -51,14 +29,12 @@ export default function Navbar() {
         const delta = currentY - lastScrollY.current;
 
         if (currentY < 10) {
-          // At the very top — always show, start auto-hide
+          // At the very top — always show
           setVisible(true);
           setScrolled(false);
           scrollUpAccum.current = 0;
-          startHideTimer();
         } else if (delta > 4) {
-          // Scrolling DOWN — hide header immediately, reset upward accumulator
-          clearHideTimer();
+          // Scrolling DOWN — hide header, reset upward accumulator
           setVisible(false);
           setScrolled(true);
           scrollUpAccum.current = 0;
@@ -66,15 +42,11 @@ export default function Navbar() {
           // Scrolling UP — accumulate; only show after 90px upward movement
           scrollUpAccum.current += Math.abs(delta);
           if (scrollUpAccum.current >= 90) {
-            clearHideTimer();
             setVisible(true);
             setScrolled(true);
-            // Auto-hide after 2s if no further scroll-up activity
-            startHideTimer();
           }
-        } else {
-          // Very small movement — don't reset accumulator, don't act
         }
+        // Very small movement — ignore
 
         lastScrollY.current = currentY;
         ticking.current = false;
@@ -82,19 +54,15 @@ export default function Navbar() {
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      clearHideTimer();
-    };
-  }, [clearHideTimer, startHideTimer]);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Close mobile menu and show header on route change
   useEffect(() => {
     setIsOpen(false);
     scrollUpAccum.current = 0;
-    showHeader();
-  }, [location, showHeader]);
+    setVisible(true);
+  }, [location]);
 
   const navLinks = [
     { href: "/", label: "হোম", icon: Home },
