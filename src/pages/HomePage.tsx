@@ -319,21 +319,20 @@ export default function HomePage() {
             </div>
             <h3 className="text-lg font-bold text-edu-slate-800 mb-0.5">Yeasin Arafat</h3>
             <div className="text-edu-green-600 text-xs font-semibold mb-4">Full Stack Developer</div>
-            <a
-              href="https://yeasin.freedev.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95"
+            <button
+              onClick={() => window.open("https://yeasin.freedev.app", "_blank")}
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
               style={{
                 background: "linear-gradient(135deg, #15803d, #22c55e)",
                 color: "#ffffff",
                 boxShadow: "0 2px 8px rgba(21,128,61,0.2)",
+                border: "none",
               }}
             >
               <Code2 size={13} />
               Visit Website
               <ExternalLink size={11} />
-            </a>
+            </button>
           </div>
         </div>
       </section>
