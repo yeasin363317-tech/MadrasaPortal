@@ -21,7 +21,7 @@ const PALETTES = [
 function WaIcon({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-[...]
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.886 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
     </svg>
   );
 }
@@ -57,7 +57,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen" style={{ background: "#fafafa" }}>
 
-      {/* ══ HERO ══ */}
+      {/* HERO */}
       <section className="relative overflow-hidden pt-32 pb-0">
         <div className="absolute inset-0 pointer-events-none" style={{ willChange: "auto" }}>
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full opacity-25"
@@ -91,7 +91,7 @@ export default function HomePage() {
             {[
               { value: subjects.length || "—", label: "বিষয়" },
               { value: "১৫৬", label: "শিক্ষার্থী" },
-              { value: "২০२५", label: "সেশন" },
+              { value: "২০২৫", label: "সেশন" },
             ].map((stat) => (
               <div key={stat.label} className="text-center p-3 rounded-2xl"
                 style={{ background: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
@@ -104,7 +104,7 @@ export default function HomePage() {
         <div style={{ height: 36, background: "#f0fdf4", clipPath: "ellipse(80% 100% at 50% 100%)" }} />
       </section>
 
-      {/* ══ QUICK NAV ══ */}
+      {/* QUICK NAV */}
       <section className="bg-edu-green-50 py-5 px-4">
         <div className="max-w-2xl mx-auto">
           <div className="grid grid-cols-4 gap-3">
@@ -125,7 +125,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══ SUBJECTS ══ */}
+      {/* SUBJECTS */}
       <section id="subjects" className="py-10 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-7">
@@ -152,8 +152,10 @@ export default function HomePage() {
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-16"><div className="text-5xl mb-4">🔍</div>
-              <div className="text-edu-slate-400 text-lg">কোনো বিষয় পাওয়া যায়নি</div></div>
+            <div className="text-center py-16">
+              <div className="text-5xl mb-4">🔍</div>
+              <div className="text-edu-slate-400 text-lg">কোনো বিষয় পাওয়া যায়নি</div>
+            </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {filtered.map((subject, i) => {
@@ -176,14 +178,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══ WHATSAPP GROUP ══ */}
+      {/* WHATSAPP GROUP */}
       <section className="py-5 px-4" style={{ background: "#f0fdf4" }}>
         <div className="max-w-2xl mx-auto">
           <a href="https://chat.whatsapp.com/E3uwX8AJIxj2YWSp6wmwdG" target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-4 p-4 rounded-3xl transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
             style={{ background: "linear-gradient(135deg, #15803d, #22c55e)", boxShadow: "0 6px 24px rgba(21,128,61,0.3)" }}>
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
-              style={{ background: "rgba(255,255,255,0.2)" }}><WaIcon size={24} /></div>
+              style={{ background: "rgba(255,255,255,0.2)" }}>
+              <WaIcon size={24} />
+            </div>
             <div className="flex-1">
               <div className="text-white font-bold text-sm">Join Our Official WhatsApp Group</div>
               <div className="text-white/70 text-xs mt-0.5">সর্বশেষ আপডেট ও নোটিশ পেতে গ্রুপে যোগ দিন</div>
@@ -194,18 +198,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══ QURAN VERSE ══ */}
+      {/* QURAN VERSE */}
       <section className="py-8 px-4">
         <div className="max-w-2xl mx-auto rounded-3xl p-8 text-center"
           style={{ background: "linear-gradient(135deg, #15803d, #166534)", boxShadow: "0 8px 32px rgba(21,128,61,0.2)" }}>
           <div className="font-arabic text-2xl md:text-3xl text-edu-gold-300 mb-3 leading-loose">
             ﴿ اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ ﴾
           </div>
-          <p className="text-white/80 text-sm">"পড়ো তোমার রবের নামে যিনি সৃষ্টি করেছেন।" — সূরা আল-আলাক,[...]
+          <p className="text-white/80 text-sm">"পড়ো তোমার রবের নামে যিনি সৃষ্টি করেছেন।" — সূরা আল-আলাক, আয়াত ১</p>
         </div>
       </section>
 
-      {/* ══ CONTACT ══ */}
+      {/* CONTACT */}
       <section id="contact" className="py-10 px-4" style={{ background: "#f8fafc" }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-7">
@@ -229,8 +233,10 @@ export default function HomePage() {
                   </div>
                   <div>
                     <div className="text-xs text-edu-slate-400 font-semibold uppercase tracking-wider mb-0.5">ঠিকানা</div>
-                    <p className="text-edu-slate-700 text-sm leading-relaxed">মাদ্রাসা রোড, গাজী চট (বাইপাইল),<br />আশুলিয়া, স[...]
-                   </div>
+                    <p className="text-edu-slate-700 text-sm leading-relaxed">
+                      মাদ্রাসা রোড, গাজী চট (বাইপাইল),<br />আশুলিয়া, সাভার, ঢাকা।
+                    </p>
+                  </div>
                 </div>
                 {["+88 01518-734669", "+8801712-822642"].map((num) => (
                   <a key={num} href={`tel:${num.replace(/[^+\d]/g, "")}`}
@@ -256,7 +262,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Google Map — lazy load, isolated to prevent GPU glitch */}
+            {/* Google Map — lazy load */}
             <div className="edu-card overflow-hidden" style={{ minHeight: 320 }}>
               <div className="flex items-center gap-2 px-5 py-3 border-b border-edu-slate-100">
                 <MapPin size={14} className="text-edu-green-600" />
@@ -266,7 +272,7 @@ export default function HomePage() {
                 {!mapLoaded ? (
                   <button
                     onClick={() => setMapLoaded(true)}
-                    className="absolute inset-0 flex flex-col items-center justify-center gap-3 transition-colors hover:bg-edu-green-50"
+                    className="absolute inset-0 flex flex-col items-center justify-center gap-3 transition-colors hover:bg-edu-green-50 w-full"
                     style={{ background: "#f0fdf4" }}
                   >
                     <div className="text-4xl">🗺</div>
@@ -276,8 +282,9 @@ export default function HomePage() {
                 ) : (
                   <iframe
                     title="Madrasa Location"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3648.3!2d90.2993!3d23.8975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDUzJzUxLjAiTiA5MMKwMTc[...]
-                    width="100%" height="256"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3648.3!2d90.2993!3d23.8975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDUzJzUxLjAiTiA5MMKwMTcnNTcuNSJF!5e0!3m2!1sbn!2sbd!4v1620000000000!5m2!1sbn!2sbd"
+                    width="100%"
+                    height="256"
                     style={{ border: 0, display: "block" }}
                     allowFullScreen
                     loading="lazy"
@@ -285,9 +292,12 @@ export default function HomePage() {
                   />
                 )}
               </div>
-              <a href="https://maps.google.com/?q=Gazirchat+Madinatul+Ulum+Fazil+Madrasa+Ashulia+Savar+Dhaka"
-                target="_blank" rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-5 py-3 text-xs font-semibold text-edu-green-600 hover:text-edu-green-700 transition-colors border-t border-edu-slate-100">
+              <a
+                href="https://maps.google.com/?q=Gazirchat+Madinatul+Ulum+Fazil+Madrasa+Ashulia+Savar+Dhaka"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 px-5 py-3 text-xs font-semibold text-edu-green-600 hover:text-edu-green-700 transition-colors border-t border-edu-slate-100"
+              >
                 <ExternalLink size={12} /> Google Maps-এ দেখুন
               </a>
             </div>
@@ -295,7 +305,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══ DEVELOPER SECTION ══ */}
+      {/* DEVELOPER SECTION */}
       <section className="py-6 px-4">
         <div className="max-w-sm mx-auto">
           <div className="edu-card p-4 text-center"
@@ -305,7 +315,7 @@ export default function HomePage() {
               👨‍💻
             </div>
             <div className="text-edu-slate-400 text-[10px] uppercase tracking-widest font-semibold mb-0.5">
-              Designed & Developed by
+              Designed &amp; Developed by
             </div>
             <h3 className="text-lg font-bold text-edu-slate-800 mb-0.5">Yeasin Arafat</h3>
             <div className="text-edu-green-600 text-xs font-semibold mb-4">Full Stack Developer</div>
